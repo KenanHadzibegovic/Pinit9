@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PINIT — Platforma</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --brand:#1a7a34;--brand-d:#0f4f21;--brand-l:#e6f4eb;
+  --red:#ff3b30;--orange:#ff9500;--blue:#007aff;--purple:#5856d6;--teal:#30b0c7;--yellow:#ffcc00;--pink:#ff2d55;
+  --redl:#ffece9;--orangel:#fff3e0;--bluel:#e9f1ff;--purplel:#ecebfb;--greenl:#e7f7ec;
+  --bg:#eef0f4;--card:#ffffff;--glass:rgba(255,255,255,.72);--glass2:rgba(255,255,255,.55);
+  --ink:#1c1c1e;--ink2:#3c3c43;--ink3:#8e8e93;--ink4:#aeaeb2;
+  --sep:rgba(60,60,67,.13);--sep2:rgba(60,60,67,.07);
+  --fn:-apple-system,"SF Pro Display","SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif;
+  --r:22px;--r2:16px;--r3:12px;
+  --sh:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);
+  --sh2:0 2px 8px rgba(0,0,0,.05);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:var(--fn);color:var(--ink);font-size:14px;overflow:hidden;
+  background:
+    radial-gradient(1100px 700px at 85% -8%,rgba(0,122,255,.10),transparent 60%),
+    radial-gradient(1000px 700px at -5% 105%,rgba(26,122,52,.12),transparent 55%),
+    radial-gradient(800px 600px at 50% 120%,rgba(88,86,214,.08),transparent 60%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;letter-spacing:-.01em;}
+button,select,input{font-family:var(--fn);cursor:pointer;color:inherit;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.14);border-radius:4px;}
+.app{display:flex;height:100vh;padding:14px;gap:14px;}
+
+/* ───── SIDEBAR (frosted glass) ───── */
+.side{width:250px;flex-shrink:0;background:var(--glass);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);
+  border:.5px solid rgba(255,255,255,.7);border-radius:26px;box-shadow:var(--sh);display:flex;flex-direction:column;padding:18px 14px;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:11px;padding:4px 8px 16px;}
+.logo-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(160deg,#22a845,#0f4f21);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(26,122,52,.4);}
+.logo-mark svg{width:21px;height:21px;fill:#fff;}
+.logo-t{font-size:19px;font-weight:700;letter-spacing:-.5px;}
+.logo-s{font-size:11px;color:var(--ink3);margin-top:0;font-weight:500;}
+
+/* segmented service switcher */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:rgba(118,118,128,.12);border-radius:13px;padding:3px;margin:4px 4px 16px;}
+.seg-btn{border:none;background:none;border-radius:10px;padding:8px 4px;font-size:11.5px;font-weight:600;color:var(--ink2);display:flex;align-items:center;justify-content:center;gap:5px;transition:all .18s;}
+.seg-btn.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12);color:var(--ink);}
+.seg-btn .dot{width:7px;height:7px;border-radius:50%;}
+
+.nav-lbl{font-size:11px;font-weight:600;color:var(--ink4);text-transform:uppercase;letter-spacing:.4px;padding:10px 12px 6px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:13px;color:var(--ink2);font-size:14px;font-weight:500;border:none;background:none;width:100%;text-align:left;transition:all .15s;margin-bottom:2px;}
+.nav-item svg{width:19px;height:19px;fill:currentColor;flex-shrink:0;opacity:.85;}
+.nav-item:hover{background:rgba(118,118,128,.1);}
+.nav-item.on{background:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(26,122,52,.35);}
+.nav-item.on svg{opacity:1;}
+.nav-badge{margin-left:auto;font-size:11px;font-weight:700;background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;min-width:20px;text-align:center;}
+.nav-item.on .nav-badge{background:rgba(255,255,255,.28);}
+.side-foot{margin-top:auto;padding:12px 10px 4px;display:flex;align-items:center;gap:10px;}
+.side-foot-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(140deg,#007aff,#5856d6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;}
+.side-foot-n{font-size:13px;font-weight:600;}
+.side-foot-r{font-size:11px;color:var(--ink3);}
+
+/* ───── MAIN ───── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;gap:14px;}
+.topbar{height:62px;background:var(--glass);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);
+  border:.5px solid rgba(255,255,255,.7);border-radius:22px;box-shadow:var(--sh2);display:flex;align-items:center;padding:0 22px;gap:14px;flex-shrink:0;}
+.tb-title{font-size:20px;font-weight:700;letter-spacing:-.6px;}
+.tb-sub{font-size:12px;color:var(--ink3);margin-top:0;font-weight:500;}
+.tb-sp{flex:1;}
+.pill-sel{background:rgba(118,118,128,.12);border:none;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:var(--ink2);outline:none;}
+.btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:13px;padding:10px 16px;font-size:13px;font-weight:600;transition:all .15s;}
+.btn svg{width:16px;height:16px;fill:currentColor;}
+.btn.primary{background:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(26,122,52,.3);}
+.btn.primary:hover{background:var(--brand-d);}
+.btn.ghost{background:rgba(118,118,128,.12);color:var(--ink2);}
+.btn.ghost:hover{background:rgba(118,118,128,.2);}
+
+.body{flex:1;overflow-y:auto;padding-right:2px;}
+.screen{display:none;}
+.screen.on{display:block;animation:rise .3s cubic-bezier(.2,.7,.3,1);}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* cards */
+.card{background:var(--card);border:.5px solid var(--sep2);border-radius:var(--r);box-shadow:var(--sh);padding:20px 22px;}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;}
+.card-t{font-size:16px;font-weight:700;letter-spacing:-.3px;}
+.card-badge{font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px;background:var(--brand-l);color:var(--brand-d);}
+.lead{font-size:13.5px;color:var(--ink2);line-height:1.55;margin-bottom:18px;max-width:700px;}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.kpi{background:var(--card);border:.5px solid var(--sep2);border-radius:var(--r);box-shadow:var(--sh);padding:18px 20px;}
+.kpi-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.kpi-ic{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;}
+.kpi-ic svg{width:19px;height:19px;}
+.kpi-lbl{font-size:12.5px;color:var(--ink3);font-weight:600;}
+.kpi-val{font-size:32px;font-weight:700;letter-spacing:-1.2px;line-height:1;}
+.kpi-val small{font-size:16px;color:var(--ink3);font-weight:600;}
+.kpi-delta{font-size:12px;font-weight:600;margin-top:9px;}
+.up{color:var(--brand);}.down{color:var(--red);}.flat{color:var(--ink3);}
+
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-bottom:14px;}
+.grid2b{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.chart-box{position:relative;height:240px;}
+.chart-box.sm{height:210px;}
+
+/* task rows */
+.task{display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:var(--r2);border:.5px solid var(--sep2);margin-bottom:9px;background:#fff;transition:all .15s;}
+.task:hover{box-shadow:var(--sh2);transform:translateY(-1px);}
+.task-ic{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.task-ic svg{width:21px;height:21px;}
+.task-main{flex:1;min-width:0;}
+.task-t{font-size:14px;font-weight:600;letter-spacing:-.2px;}
+.task-m{font-size:12px;color:var(--ink3);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.chip.urgent{background:var(--redl);color:#c4271d;}
+.chip.med{background:var(--orangel);color:#9a5a00;}
+.chip.low{background:rgba(118,118,128,.14);color:var(--ink2);}
+.chip.new{background:var(--bluel);color:#0058c4;}
+.chip.prog{background:var(--orangel);color:#9a5a00;}
+.chip.done{background:var(--greenl);color:var(--brand-d);}
+.votes{font-size:11px;color:var(--ink3);font-weight:600;display:flex;align-items:center;gap:3px;}
+.task-act{display:flex;gap:7px;flex-shrink:0;}
+.mini-btn{border:none;border-radius:11px;padding:8px 13px;font-size:12.5px;font-weight:600;background:var(--brand);color:#fff;transition:all .15s;}
+.mini-btn:hover{background:var(--brand-d);}
+.mini-btn.sec{background:rgba(118,118,128,.14);color:var(--ink2);}
+.mini-btn.sec:hover{background:rgba(118,118,128,.24);}
+
+/* worker mini */
+.wk{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--r2);border:.5px solid var(--sep2);margin-bottom:8px;background:#fff;}
+.wk-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.wk-n{font-size:13.5px;font-weight:600;}
+.wk-r{font-size:11.5px;color:var(--ink3);}
+.wk-st{margin-left:auto;font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px;}
+.st-busy{background:var(--orangel);color:#9a5a00;}
+.st-free{background:var(--greenl);color:var(--brand-d);}
+.st-off{background:rgba(118,118,128,.14);color:var(--ink3);}
+
+/* table */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:10px 12px;border-bottom:1px solid var(--sep);white-space:nowrap;}
+td{font-size:13px;padding:13px 12px;border-bottom:1px solid var(--sep2);white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+.tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.tag.ok{background:var(--greenl);color:var(--brand-d);}
+.tag.warn{background:var(--orangel);color:#9a5a00;}
+.tag.bad{background:var(--redl);color:#c4271d;}
+
+/* SLA alarms */
+.alarm{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:var(--r2);margin-bottom:10px;border:.5px solid var(--sep2);background:#fff;position:relative;overflow:hidden;}
+.alarm::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;}
+.alarm.over::before{background:var(--red);}
+.alarm.crit::before{background:var(--red);}
+.alarm.warn::before{background:var(--orange);}
+.alarm.ok::before{background:var(--brand);}
+.alarm.crit{animation:apulse 2s infinite;}
+@keyframes apulse{0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,.18)}50%{box-shadow:0 0 0 6px rgba(255,59,48,0)}}
+.alarm-time{font-variant-numeric:tabular-nums;font-size:20px;font-weight:700;letter-spacing:-.5px;width:96px;flex-shrink:0;}
+.alarm.over .alarm-time,.alarm.crit .alarm-time{color:var(--red);}
+.alarm.warn .alarm-time{color:var(--orange);}
+.alarm.ok .alarm-time{color:var(--brand);}
+.alarm-main{flex:1;min-width:0;}
+.alarm-t{font-size:14px;font-weight:600;}
+.alarm-m{font-size:12px;color:var(--ink3);margin-top:2px;}
+
+/* live map */
+.map-wrap{position:relative;border-radius:var(--r);overflow:hidden;height:440px;border:.5px solid var(--sep2);background:linear-gradient(160deg,#dde7f0,#e8eef4);}
+.map-svg{width:100%;height:100%;display:block;}
+.wpin{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .15s;z-index:2;}
+.wpin:hover{transform:translate(-50%,-100%) scale(1.08);z-index:5;}
+.wpin-head{width:38px;height:38px;border-radius:50% 50% 50% 4px;transform:rotate(45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.25);border:2.5px solid #fff;}
+.wpin-head span{transform:rotate(-45deg);font-size:12px;font-weight:800;color:#fff;}
+.wpin-lbl{margin-top:7px;font-size:10px;font-weight:700;background:#fff;padding:2px 7px;border-radius:7px;box-shadow:0 2px 6px rgba(0,0,0,.15);white-space:nowrap;}
+.map-legend{position:absolute;bottom:14px;left:14px;background:var(--glass);backdrop-filter:blur(20px);border-radius:14px;padding:11px 14px;box-shadow:var(--sh2);display:flex;gap:16px;}
+.lg-item{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--ink2);}
+.lg-dot{width:9px;height:9px;border-radius:50%;}
+
+/* shift planner */
+.shift-grid{display:grid;grid-template-columns:150px repeat(7,1fr);gap:6px;}
+.sh-head{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;padding:6px;text-align:center;}
+.sh-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px;padding:6px 4px;}
+.sh-cell{border-radius:11px;padding:9px 4px;text-align:center;font-size:11px;font-weight:700;border:.5px solid var(--sep2);transition:all .12s;}
+.sh-cell:hover{transform:scale(1.05);}
+.sh-J{background:var(--orangel);color:#9a5a00;}
+.sh-P{background:var(--bluel);color:#0058c4;}
+.sh-N{background:var(--purplel);color:#3b35a8;}
+.sh-O{background:rgba(118,118,128,.1);color:var(--ink4);}
+.sh-avail{font-size:11px;font-weight:700;text-align:center;padding-top:6px;color:var(--brand);}
+
+/* perf bars */
+.pf-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--sep2);}
+.pf-row:last-child{border-bottom:none;}
+.pf-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+.pf-name{font-size:13px;font-weight:600;width:140px;flex-shrink:0;}
+.pf-bar-bg{flex:1;height:9px;border-radius:5px;background:var(--bg);overflow:hidden;}
+.pf-bar{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--brand),#22a845);}
+.pf-val{font-size:13px;font-weight:700;width:42px;text-align:right;}
+
+/* zones / dist / csat (reused from grad) */
+.zone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.zone{border-radius:14px;padding:13px 14px;border:.5px solid var(--sep2);}
+.zone-n{font-size:13px;font-weight:700;}
+.zone-c{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-top:4px;}
+.zone-s{font-size:11px;color:var(--ink3);}
+.note{display:flex;gap:11px;background:var(--orangel);border:.5px solid rgba(255,149,0,.25);border-radius:14px;padding:13px 15px;}
+.note svg{width:18px;height:18px;fill:var(--orange);flex-shrink:0;margin-top:1px;}
+.note-t{font-size:12.5px;font-weight:700;color:#8a5300;}
+.note-b{font-size:12px;color:#8a5300;line-height:1.5;margin-top:2px;opacity:.92;}
+.csat-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}
+.csat-big{background:var(--card);border:.5px solid var(--sep2);border-radius:var(--r);box-shadow:var(--sh);padding:22px;text-align:center;}
+.csat-score{font-size:46px;font-weight:700;letter-spacing:-2px;line-height:1;}
+.csat-score small{font-size:20px;color:var(--ink3);}
+.csat-lbl{font-size:13px;font-weight:600;color:var(--ink2);margin-top:6px;}
+.csat-meta{font-size:11px;color:var(--ink3);margin-top:5px;}
+.stars{color:#ffb300;font-size:20px;letter-spacing:2px;margin-top:8px;}
+.dist-row{display:flex;align-items:center;gap:12px;margin-bottom:9px;}
+.dist-star{font-size:12px;font-weight:600;width:42px;color:var(--ink2);}
+.dist-bg{flex:1;height:14px;border-radius:7px;background:var(--bg);overflow:hidden;}
+.dist-fill{height:100%;border-radius:7px;background:#ffb300;}
+.dist-n{font-size:12px;font-weight:600;width:58px;text-align:right;color:var(--ink2);}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.on{display:flex;animation:fade .2s;}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--glass);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:.5px solid rgba(255,255,255,.8);border-radius:26px;box-shadow:0 30px 80px rgba(0,0,0,.3);width:460px;max-width:100%;max-height:86vh;overflow-y:auto;padding:24px;animation:pop .28s cubic-bezier(.2,.8,.3,1);}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-h{font-size:19px;font-weight:700;letter-spacing:-.4px;margin-bottom:4px;}
+.modal-s{font-size:13px;color:var(--ink3);margin-bottom:18px;}
+.opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r2);border:.5px solid var(--sep);margin-bottom:8px;background:#fff;transition:all .14s;}
+.opt:hover{border-color:var(--brand);background:var(--brand-l);}
+.opt.dim{opacity:.5;pointer-events:none;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(28,28,30,.92);backdrop-filter:blur(20px);color:#fff;padding:13px 22px;border-radius:16px;font-size:13.5px;font-weight:600;box-shadow:0 12px 32px rgba(0,0,0,.3);z-index:200;opacity:0;transition:all .3s cubic-bezier(.2,.8,.3,1);}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1;}
+.empty{text-align:center;color:var(--ink3);padding:40px 0;}
+.empty-e{font-size:40px;margin-bottom:10px;}
+@media print{.side,.topbar{display:none;}.app{padding:0;}.body{overflow:visible;}.screen{display:block!important;}.card,.kpi{box-shadow:none;break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg></div>
+      <div><div class="logo-t">PINIT</div><div class="logo-s">Platforma</div></div>
+    </div>
+
+    <div class="seg" id="svcSeg">
+      <button class="seg-btn on" data-svc="putevi" onclick="setSvc('putevi',this)"><span class="dot" style="background:#f59000"></span>Putevi</button>
+      <button class="seg-btn" data-svc="voda" onclick="setSvc('voda',this)"><span class="dot" style="background:#0891b2"></span>Vodovod</button>
+      <button class="seg-btn" data-svc="elektro" onclick="setSvc('elektro',this)"><span class="dot" style="background:#e24b4a"></span>Elektro</button>
+      <button class="seg-btn" data-svc="cistoca" onclick="setSvc('cistoca',this)"><span class="dot" style="background:#16a34a"></span>Čistoća</button>
+    </div>
+
+    <div class="nav-lbl">Dispečer</div>
+    <button class="nav-item on" onclick="nav('disp',this)"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Pregled</button>
+    <button class="nav-item" onclick="nav('tasks',this)"><svg viewBox="0 0 24 24"><path d="M3 5h18v2H3zm0 6h18v2H3zm0 6h18v2H3z"/></svg>Zadaci<span class="nav-badge" id="navTasks">0</span></button>
+    <button class="nav-item" onclick="nav('sla',this)"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>SLA alarmi<span class="nav-badge" id="navSla">0</span></button>
+    <button class="nav-item" onclick="nav('map',this)"><svg viewBox="0 0 24 24"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>Radnici uživo</button>
+    <button class="nav-item" onclick="nav('shifts',this)"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>Smjene</button>
+    <button class="nav-item" onclick="nav('perf',this)"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>Učinak radnika</button>
+    <button class="nav-item" onclick="nav('analytics',this)"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-5h2v5zm4 0h-2V7h2v10zm4 0h-2v-7h2v7z"/></svg>Analitika kvarova</button>
+
+    <div class="nav-lbl">Grad</div>
+    <button class="nav-item" onclick="nav('exec',this)"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>Izvršni pregled</button>
+    <button class="nav-item" onclick="nav('equity',this)"><svg viewBox="0 0 24 24"><path d="M12 3L2 9l10 6 10-6-10-6zm0 13.5L4 11v2l8 5 8-5v-2l-8 5.5zM3 7l9 5.4L21 7M12 19.5L4 14.5v.5l8 5 8-5v-.5l-8 5z"/></svg>Pravednost</button>
+    <button class="nav-item" onclick="nav('forecast',this)"><svg viewBox="0 0 24 24"><path d="M3 13c0-1 .5-3 3-3s3 2 5 2 2.5-2 5-2 3 2 3 3v6H3v-6zm2-7a3 3 0 116 0 3 3 0 01-6 0z" opacity=".55"/><path d="M3 20h18v1H3z"/><path d="M5 16l3-3 3 2 4-5 4 3v3H5z"/></svg>Prognoze</button>
+    <button class="nav-item" onclick="nav('csat',this)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>Zadovoljstvo</button>
+    <button class="nav-item" onclick="nav('svc',this)"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Učinak službi</button>
+
+    <div class="side-foot">
+      <div class="side-foot-av" id="footAv">DP</div>
+      <div><div class="side-foot-n" id="footName">JKP Putevi</div><div class="side-foot-r">Dispečer · uživo</div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div><div class="tb-title" id="tbTitle">Pregled</div><div class="tb-sub" id="tbSub">JKP Putevi · uživo</div></div>
+      <div class="tb-sp"></div>
+      <select class="pill-sel" id="periodSel" onchange="renderGrad()" style="display:none"><option value="m">Ovaj mjesec</option><option value="q">Zadnja 3 mjeseca</option><option value="y">Ova godina</option></select>
+      <button class="btn primary" id="topBtn" onclick="topAction()"><svg viewBox="0 0 24 24" id="topBtnIc"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span id="topBtnT">Novi zadatak</span></button>
+    </div>
+
+    <div class="body" id="body"><!-- screens injected --></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════ DATA (ported from dispatcher v2) ═══════════ */
+const SVC_DATA={
+  putevi:{label:'JKP Putevi',color:'#f59000',
+    cats:{putevi:{n:'Rupa / oštećenje',c:'#f59000',bg:'#fff4e3',i:'<path d="M17 3h-2V1h-2v2h-2V1H9v2H7V1H5v2H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-2V1h-2v2zm2 16H5V7h14v12z"/>'}},
+    workers:[
+      {id:1,name:'Edin Begić',role:'Asfalt / putevi',av:'EB',bg:'#fff4e3',tc:'#854f0b',status:'busy',tasks:1,done:24,sla:96,loc:'Ferhadija'},
+      {id:2,name:'Mirza Hodžić',role:'Asfalt / putevi',av:'MH',bg:'#e9f1ff',tc:'#0058c4',status:'free',tasks:0,done:18,sla:88,loc:'Baza'},
+      {id:3,name:'Adnan Selimović',role:'Signalizacija',av:'AS',bg:'#ecebfb',tc:'#3b35a8',status:'busy',tasks:2,done:31,sla:79,loc:'Bul. Meše S.'},
+      {id:4,name:'Kenan Ibrić',role:'Asfalt / putevi',av:'KI',bg:'#fff4e3',tc:'#854f0b',status:'free',tasks:0,done:15,sla:93,loc:'Baza'},
+      {id:5,name:'Damir Zukić',role:'Mehanizacija',av:'DZ',bg:'#fef3d6',tc:'#7a5200',status:'busy',tasks:1,done:9,sla:82,loc:'Titova'},
+      {id:6,name:'Sanel Mehić',role:'Signalizacija',av:'SM',bg:'#e7f7ec',tc:'#27500a',status:'off',tasks:0,done:20,sla:91,loc:'Off duty'},
+    ],
+    orders:[
+      {id:'WO-2384',cat:'putevi',addr:'Ferhadija 12, Centar',zone:'centar',status:'new',pri:'urgent',votes:28,note:'Velika rupa cijela traka, hitno!',citizen:'Ana P.',ts:Date.now()-15*60000,worker:null,cost:null,sla:4},
+      {id:'WO-2383',cat:'putevi',addr:'Zmaj od Bosne 44',zone:'novosa',status:'new',pri:'med',votes:19,note:'Ivičnjak izlomljen.',citizen:'Mirza H.',ts:Date.now()-45*60000,worker:null,cost:null,sla:24},
+      {id:'WO-2382',cat:'putevi',addr:'Trg djece Sarajeva',zone:'centar',status:'new',pri:'low',votes:7,note:'',citizen:'Selma B.',ts:Date.now()-2*3600000,worker:null,cost:null,sla:72},
+      {id:'WO-2381',cat:'putevi',addr:'Titova 8, Centar',zone:'centar',status:'prog',pri:'urgent',votes:32,note:'Blokirana traka.',citizen:'Adnan K.',ts:Date.now()-3600000,worker:1,cost:185,sla:4},
+      {id:'WO-2380',cat:'putevi',addr:'Bul. Meše Selimovića',zone:'novigrad',status:'prog',pri:'med',votes:12,note:'',citizen:'Lejla M.',ts:Date.now()-18*3600000,worker:3,cost:null,sla:24},
+      {id:'WO-2379',cat:'putevi',addr:'Maršala Tita 22',zone:'centar',status:'prog',pri:'med',votes:9,note:'',citizen:'Kenan F.',ts:Date.now()-22*3600000,worker:3,cost:95,sla:24},
+      {id:'WO-2378',cat:'putevi',addr:'Mehmedalije Tarabara',zone:'novosa',status:'done',pri:'low',votes:5,note:'',citizen:'Amra D.',ts:Date.now()-25*3600000,worker:5,cost:310,sla:72},
+      {id:'WO-2377',cat:'putevi',addr:'Obala Kulina bana',zone:'starigrad',status:'done',pri:'low',votes:6,note:'',citizen:'Faruk N.',ts:Date.now()-30*3600000,worker:2,cost:140,sla:72},
+    ]},
+  voda:{label:'JKP Vodovod',color:'#0891b2',
+    cats:{voda:{n:'Curenje / cijev',c:'#0891b2',bg:'#ecfeff',i:'<path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8z"/>'},
+          poplava:{n:'Poplava / kanal',c:'#0369a1',bg:'#e0f2fe',i:'<path d="M17.66 8L12 2.35 6.34 8C4.78 9.56 4 11.64 4 13.64s.78 4.11 2.34 5.67 3.61 2.35 5.66 2.35 4.1-.79 5.66-2.35S20 15.64 20 13.64 19.22 9.56 17.66 8z"/>'}},
+    workers:[
+      {id:1,name:'Haris Čengić',role:'Vodoinstalater',av:'HC',bg:'#ecfeff',tc:'#0891b2',status:'busy',tasks:1,done:18,sla:91,loc:'Grbavica'},
+      {id:2,name:'Amar Kovačević',role:'Vodoinstalater',av:'AK',bg:'#e0f2fe',tc:'#0369a1',status:'free',tasks:0,done:14,sla:85,loc:'Baza'},
+      {id:3,name:'Jasmina Tulić',role:'Inspekcija',av:'JT',bg:'#e7f7ec',tc:'#166534',status:'busy',tasks:2,done:22,sla:88,loc:'Ilidža'},
+      {id:4,name:'Nermin Đulić',role:'Vodoinstalater',av:'ND',bg:'#fef3d6',tc:'#854d0e',status:'free',tasks:0,done:11,sla:79,loc:'Baza'},
+    ],
+    orders:[
+      {id:'WV-0821',cat:'voda',addr:'Titova 34, Centar',zone:'centar',status:'new',pri:'urgent',votes:31,note:'Pukla cijev, voda na ulici!',citizen:'Amer B.',ts:Date.now()-10*60000,worker:null,cost:null,sla:4},
+      {id:'WV-0820',cat:'voda',addr:'Koševo 18, Centar',zone:'centar',status:'new',pri:'med',votes:14,note:'Curenje iz hidranta.',citizen:'Sanela K.',ts:Date.now()-40*60000,worker:null,cost:null,sla:24},
+      {id:'WV-0819',cat:'poplava',addr:'Hrasno, Novo Sarajevo',zone:'novosa',status:'new',pri:'urgent',votes:22,note:'Začepljen kanal, poplava podruma.',citizen:'Dino H.',ts:Date.now()-90*60000,worker:null,cost:null,sla:4},
+      {id:'WV-0818',cat:'voda',addr:'Bul. Meše S. 40',zone:'novigrad',status:'prog',pri:'med',votes:8,note:'',citizen:'Almira P.',ts:Date.now()-5*3600000,worker:1,cost:null,sla:24},
+      {id:'WV-0817',cat:'voda',addr:'Grbavica, Novo Sarajevo',zone:'novosa',status:'prog',pri:'low',votes:4,note:'Kapanje iz ventila.',citizen:'Kenan A.',ts:Date.now()-8*3600000,worker:3,cost:95,sla:72},
+      {id:'WV-0816',cat:'poplava',addr:'Ilidža, kanal',zone:'novigrad',status:'done',pri:'med',votes:11,note:'',citizen:'Merima F.',ts:Date.now()-20*3600000,worker:4,cost:220,sla:24},
+    ]},
+  elektro:{label:'JP Elektroprivreda',color:'#e24b4a',
+    cats:{rasveta:{n:'Nema rasvjete',c:'#e24b4a',bg:'#fcebeb',i:'<path d="M9 21h6v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>'},
+           elektro:{n:'Kvar struje',c:'#f59000',bg:'#fff4e3',i:'<path d="M7 2v11h3v9l7-12h-4l4-8z"/>'}},
+    workers:[
+      {id:1,name:'Mujo Karić',role:'Elektrotehničar',av:'MK',bg:'#fff4e3',tc:'#854d0e',status:'busy',tasks:2,done:35,sla:94,loc:'Titova'},
+      {id:2,name:'Alen Hadžić',role:'Elektrotehničar',av:'AH',bg:'#fef3d6',tc:'#713f12',status:'free',tasks:0,done:28,sla:89,loc:'Baza'},
+      {id:3,name:'Belma Softić',role:'Inspekcija',av:'BS',bg:'#ffe4e6',tc:'#9f1239',status:'busy',tasks:1,done:19,sla:82,loc:'Centar'},
+      {id:4,name:'Tarik Mujić',role:'Elektrotehničar',av:'TM',bg:'#ecebfb',tc:'#3b35a8',status:'free',tasks:0,done:16,sla:77,loc:'Baza'},
+      {id:5,name:'Lejla Osman',role:'Elektrotehničar',av:'LO',bg:'#ecfeff',tc:'#0891b2',status:'free',tasks:0,done:12,sla:91,loc:'Baza'},
+    ],
+    orders:[
+      {id:'EP-1142',cat:'rasveta',addr:'Ferhadija, Centar (4 stuba)',zone:'centar',status:'new',pri:'urgent',votes:41,note:'4 ulična stuba ne rade od sinoć.',citizen:'Jasmin B.',ts:Date.now()-20*60000,worker:null,cost:null,sla:4},
+      {id:'EP-1141',cat:'elektro',addr:'Skenderija, Centar',zone:'centar',status:'new',pri:'med',votes:17,note:'Kvar na transformatoru.',citizen:'Amela K.',ts:Date.now()-60*60000,worker:null,cost:null,sla:24},
+      {id:'EP-1140',cat:'rasveta',addr:'Bul. Meše S. 88',zone:'novigrad',status:'new',pri:'low',votes:5,note:'',citizen:'Vedran H.',ts:Date.now()-3*3600000,worker:null,cost:null,sla:72},
+      {id:'EP-1139',cat:'rasveta',addr:'Grbavica, Novo Sarajevo',zone:'novosa',status:'prog',pri:'med',votes:12,note:'',citizen:'Amra J.',ts:Date.now()-2*3600000,worker:1,cost:null,sla:24},
+      {id:'EP-1138',cat:'elektro',addr:'Titova 12, Centar',zone:'centar',status:'prog',pri:'urgent',votes:28,note:'Kvar trafostanice.',citizen:'Dino M.',ts:Date.now()-4*3600000,worker:3,cost:580,sla:4},
+      {id:'EP-1137',cat:'rasveta',addr:'Stari Grad, čaršija',zone:'starigrad',status:'done',pri:'low',votes:8,note:'',citizen:'Nino F.',ts:Date.now()-24*3600000,worker:2,cost:120,sla:72},
+    ]},
+  cistoca:{label:'JKP Čistoća',color:'#16a34a',
+    cats:{otpad:{n:'Otpad / smeće',c:'#16a34a',bg:'#e7f7ec',i:'<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4h-3.5z"/>'},
+           predmet:{n:'Predmet na putu',c:'#7c3aed',bg:'#ecebfb',i:'<path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/>'}},
+    workers:[
+      {id:1,name:'Elvir Bajrić',role:'Čistoća',av:'EB',bg:'#e7f7ec',tc:'#166534',status:'busy',tasks:3,done:45,sla:87,loc:'Centar'},
+      {id:2,name:'Semin Halilović',role:'Čistoća',av:'SH',bg:'#dcfce7',tc:'#15803d',status:'busy',tasks:2,done:38,sla:82,loc:'Grbavica'},
+      {id:3,name:'Fikret Pašić',role:'Komunalno vozilo',av:'FP',bg:'#bbf7d0',tc:'#14532d',status:'free',tasks:0,done:29,sla:91,loc:'Baza'},
+      {id:4,name:'Anela Sinanović',role:'Čistoća',av:'AS',bg:'#d1fae5',tc:'#065f46',status:'busy',tasks:1,done:33,sla:85,loc:'Stari Grad'},
+    ],
+    orders:[
+      {id:'JR-3301',cat:'otpad',addr:'Ferhadija 8, Centar',zone:'centar',status:'new',pri:'urgent',votes:35,note:'Ilegalna deponija, smrad.',citizen:'Azra N.',ts:Date.now()-5*60000,worker:null,cost:null,sla:4},
+      {id:'JR-3300',cat:'predmet',addr:'Zmaj od Bosne, Centar',zone:'centar',status:'new',pri:'med',votes:22,note:'Napušteno vozilo na traci.',citizen:'Samir H.',ts:Date.now()-30*60000,worker:null,cost:null,sla:24},
+      {id:'JR-3299',cat:'otpad',addr:'Bul. Meše S.',zone:'novigrad',status:'new',pri:'low',votes:6,note:'',citizen:'Merima K.',ts:Date.now()-2*3600000,worker:null,cost:null,sla:72},
+      {id:'JR-3298',cat:'otpad',addr:'Grbavica, Novo Sarajevo',zone:'novosa',status:'prog',pri:'med',votes:14,note:'',citizen:'Tarik P.',ts:Date.now()-3*3600000,worker:1,cost:null,sla:24},
+      {id:'JR-3297',cat:'predmet',addr:'Stari Grad, Baščaršija',zone:'starigrad',status:'done',pri:'low',votes:7,note:'',citizen:'Dina F.',ts:Date.now()-18*3600000,worker:3,cost:85,sla:72},
+    ]},
+};
+const SVC_KEYS=['putevi','voda','elektro','cistoca'];
+const ZONES={centar:'Centar',novigrad:'Novi Grad',novosa:'Novo Sarajevo',starigrad:'Stari Grad'};
+const PRI={urgent:{l:'Hitno',c:'urgent'},med:{l:'Srednje',c:'med'},low:{l:'Nisko',c:'low'}};
+const ST={new:{l:'Novo',c:'new'},prog:{l:'U toku',c:'prog'},done:{l:'Riješeno',c:'done'}};
+// shift planner state per service
+const SHIFTS={};
+SVC_KEYS.forEach(s=>{SHIFTS[s]=SVC_DATA[s].workers.map((w,wi)=>{
+  const base=['J','J','P','P','N','O','O'];
+  return base.map((c,di)=>((wi+di)%4===0?'P':(wi+di)%5===0?'N':(wi+di)%7===6?'O':c));
+});});
+const DAYS=['Pon','Uto','Sri','Čet','Pet','Sub','Ned'];
+const SHIFT_NAMES={J:'Jutarnja',P:'Popodnevna',N:'Noćna',O:'Slobodno'};
+const LOC_POS={'Ferhadija':[34,28],'Baza':[12,86],'Bul. Meše S.':[72,40],'Titova':[44,22],'Off duty':[8,92],'Grbavica':[58,66],'Ilidža':[20,55],'Centar':[42,34],'Stari Grad':[80,24],'Off':[8,92]};
+
+let activeSvc='putevi', current='disp', slaTimer=null;
+
+/* ═══════════ HELPERS ═══════════ */
+const $=id=>document.getElementById(id);
+function D(){return SVC_DATA[activeSvc];}
+function orders(){return D().orders;}
+function workers(){return D().workers;}
+function cats(){return D().cats;}
+function getW(id){return workers().find(w=>w.id===id);}
+function getO(id){return orders().find(o=>o.id===id);}
+function ago(ms){const m=Math.floor((Date.now()-ms)/60000);if(m<1)return'sada';if(m<60)return m+'min';if(m<1440)return Math.floor(m/60)+'h';return Math.floor(m/1440)+'d';}
+function fmtCD(ms){const neg=ms<0;ms=Math.abs(ms);const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000);return(neg?'−':'')+h+':'+m.toString().padStart(2,'0');}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600);}
+function allOrders(){return SVC_KEYS.flatMap(s=>SVC_DATA[s].orders.map(o=>({...o,svc:s})));}
+
+/* ═══════════ SERVICE + NAV ═══════════ */
+function setSvc(s,el){
+  activeSvc=s;
+  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.toggle('on',b===el));
+  const d=D();
+  $('footName').textContent=d.label;
+  $('footAv').textContent=d.label.split(' ').slice(-1)[0].slice(0,2).toUpperCase();
+  renderDispGroup();
+  if(['disp','tasks','sla','map','shifts','perf'].includes(current)){
+    $('tbSub').textContent=d.label+' · uživo';
+  }
+  refreshBadges();
+}
+const TITLES={disp:'Pregled',tasks:'Svi zadaci',sla:'SLA alarmi',map:'Radnici uživo',shifts:'Raspored smjena',perf:'Učinak radnika',analytics:'Analitika kvarova',exec:'Izvršni pregled',equity:'Pravednost po zonama',forecast:'Prognoze i predviđanja',csat:'Zadovoljstvo građana',svc:'Učinak službi'};
+const DISP=['disp','tasks','sla','map','shifts','perf','analytics'];
+function nav(id,btn){
+  current=id;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  $('sc-'+id).classList.add('on');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  $('tbTitle').textContent=TITLES[id];
+  const isDisp=DISP.includes(id);
+  $('tbSub').textContent=isDisp?(D().label+' · uživo'):'Grad Sarajevo · maj 2025';
+  $('periodSel').style.display=isDisp?'none':'';
+  // topbar button
+  if(isDisp){$('topBtnT').textContent='Novi zadatak';$('topBtnIc').innerHTML='<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>';}
+  else{$('topBtnT').textContent='Izvještaj za vijeće';$('topBtnIc').innerHTML='<path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>';}
+  // render
+  if(id==='sla'){startSlaTick();}else{stopSlaTick();}
+  if(isDisp)renderDispGroup();else renderGrad();
+}
+function topAction(){if(DISP.includes(current))openNewTask();else window.print();}
+
+/* ═══════════ DISPATCHER RENDERERS ═══════════ */
+function refreshBadges(){
+  $('navTasks').textContent=orders().filter(o=>o.status!=='done').length;
+  $('navSla').textContent=orders().filter(o=>o.status!=='done'&&(o.ts+o.sla*3600000-Date.now())<2*3600000).length;
+}
+function renderDispGroup(){renderDisp();renderTasks();renderSla();renderMap();renderShifts();renderPerf();renderAnalytics();refreshBadges();}
+
+function taskRow(o,withActions){
+  const c=cats()[o.cat]||Object.values(cats())[0];
+  const w=o.worker?getW(o.worker):null;
+  return `<div class="task">
+    <div class="task-ic" style="background:${c.bg}"><svg viewBox="0 0 24 24" style="fill:${c.c}">${c.i}</svg></div>
+    <div class="task-main">
+      <div class="task-t">${c.n} · <span style="color:var(--ink3);font-weight:500">${o.id}</span></div>
+      <div class="task-m">📍 ${o.addr} · ${ago(o.ts)}<span class="votes">▲ ${o.votes}</span></div>
+      <div class="task-m" style="margin-top:5px">
+        <span class="chip ${PRI[o.pri].c}">${PRI[o.pri].l}</span>
+        <span class="chip ${ST[o.status].c}">${ST[o.status].l}</span>
+        ${w?`<span style="color:var(--ink2);font-weight:600">👷 ${w.name}</span>`:''}
+      </div>
+    </div>
+    <div class="task-act">
+      ${o.status==='new'?`<button class="mini-btn" onclick="openAssign('${o.id}')">Dodijeli</button>`:''}
+      ${o.status==='prog'?`<button class="mini-btn" onclick="markDone('${o.id}')">Završi</button>`:''}
+      <button class="mini-btn sec" onclick="openDetail('${o.id}')">Detalji</button>
+    </div>
+  </div>`;
+}
+function renderDisp(){
+  const os=orders(),ws=workers();
+  const nw=os.filter(o=>o.status==='new').length, pg=os.filter(o=>o.status==='prog').length;
+  const risk=os.filter(o=>o.status!=='done'&&(o.ts+o.sla*3600000-Date.now())<2*3600000).length;
+  const free=ws.filter(w=>w.status==='free').length;
+  const newOrders=os.filter(o=>o.status==='new').sort((a,b)=>({urgent:3,med:2,low:1}[b.pri])-({urgent:3,med:2,low:1}[a.pri]));
+  $('sc-disp').innerHTML=`
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--bluel)"><svg viewBox="0 0 24 24" style="fill:var(--blue)"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg></div><div class="kpi-lbl">Novi zadaci</div></div><div class="kpi-val">${nw}</div><div class="kpi-delta flat">čeka raspodjelu</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--orangel)"><svg viewBox="0 0 24 24" style="fill:var(--orange)"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 11h-4v-2h2V7h2z"/></svg></div><div class="kpi-lbl">U toku</div></div><div class="kpi-val">${pg}</div><div class="kpi-delta flat">aktivnih intervencija</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--redl)"><svg viewBox="0 0 24 24" style="fill:var(--red)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg></div><div class="kpi-lbl">SLA rizik</div></div><div class="kpi-val" style="color:${risk?'var(--red)':'var(--ink)'}">${risk}</div><div class="kpi-delta ${risk?'down':'up'}">${risk?'rok blizu':'sve u roku'}</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--greenl)"><svg viewBox="0 0 24 24" style="fill:var(--brand)"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-3 0-8 1.3-8 4v2h16v-2c0-2.7-5-4-8-4z"/></svg></div><div class="kpi-lbl">Slobodni radnici</div></div><div class="kpi-val">${free}<small> / ${ws.length}</small></div><div class="kpi-delta flat">spremni za zadatak</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-t">Red novih zadataka</div><div class="card-badge">${nw} čeka</div></div>
+        ${newOrders.length?newOrders.map(o=>taskRow(o,true)).join(''):'<div class="empty"><div class="empty-e">✅</div>Nema novih zadataka</div>'}
+      </div>
+      <div class="card"><div class="card-h"><div class="card-t">Radnici</div></div>
+        ${ws.map(w=>`<div class="wk"><div class="wk-av" style="background:${w.bg};color:${w.tc}">${w.av}</div><div><div class="wk-n">${w.name}</div><div class="wk-r">${w.role} · ${w.loc}</div></div><div class="wk-st st-${w.status}">${w.status==='busy'?w.tasks+' zad.':w.status==='free'?'Slobodan':'Off'}</div></div>`).join('')}
+      </div>
+    </div>`;
+}
+function renderTasks(){
+  const os=[...orders()].sort((a,b)=>({new:0,prog:1,done:2}[a.status])-({new:0,prog:1,done:2}[b.status]));
+  $('sc-tasks').innerHTML=`<div class="card"><div class="card-h"><div class="card-t">Svi work orderi — ${D().label}</div><div class="card-badge">${os.length} ukupno</div></div>
+    ${os.map(o=>taskRow(o,true)).join('')}</div>`;
+}
+function renderSla(){
+  const list=orders().filter(o=>o.status!=='done').map(o=>({o,rem:o.ts+o.sla*3600000-Date.now()})).sort((a,b)=>a.rem-b.rem);
+  $('sc-sla').innerHTML=`
+    <div class="note" style="margin-bottom:16px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg>
+      <div><div class="note-t">Predviđanje kršenja roka</div><div class="note-b">Zadaci poredani po preostalom vremenu do isteka SLA roka. Crveno = istekao ili manje od 30 min — prerasporedi radnika odmah. Brojač se osvježava uživo.</div></div></div>
+    ${list.length?list.map(({o,rem})=>{
+      const cls=rem<0?'over':rem<30*60000?'crit':rem<2*3600000?'warn':'ok';
+      const c=cats()[o.cat]||Object.values(cats())[0]; const w=o.worker?getW(o.worker):null;
+      return `<div class="alarm ${cls}">
+        <div class="alarm-time">${fmtCD(rem)}</div>
+        <div class="alarm-main"><div class="alarm-t">${c.n} · ${o.id} <span class="chip ${PRI[o.pri].c}" style="margin-left:6px">${PRI[o.pri].l}</span></div>
+        <div class="alarm-m">📍 ${o.addr} · rok ${o.sla}h · ${w?'👷 '+w.name:'⚠ nije dodijeljen'}${rem<0?' · ROK ISTEKAO':''}</div></div>
+        ${o.status==='new'?`<button class="mini-btn" onclick="openAssign('${o.id}')">Dodijeli</button>`:`<button class="mini-btn sec" onclick="openDetail('${o.id}')">Detalji</button>`}
+      </div>`;
+    }).join(''):'<div class="empty"><div class="empty-e">🎉</div>Svi zadaci su unutar roka</div>'}`;
+}
+function renderMap(){
+  const ws=workers();
+  const pins=ws.map((w,i)=>{
+    const base=LOC_POS[w.loc]||[12,86];
+    const h=(''+w.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    const jx=(h%14)-7, jy=((h*7)%12)-6;
+    const x=Math.max(6,Math.min(94,base[0]+jx)), y=Math.max(10,Math.min(90,base[1]+jy));
+    const col=w.status==='busy'?'#ff9500':w.status==='free'?'#34c759':'#8e8e93';
+    return `<div class="wpin" style="left:${x}%;top:${y}%" onclick="openWorker('${w.id}')"><div class="wpin-head" style="background:${col}"><span>${w.av}</span></div><div class="wpin-lbl">${w.name.split(' ')[0]}</div></div>`;
+  }).join('');
+  $('sc-map').innerHTML=`
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="map-wrap">
+        <svg class="map-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="300" fill="#e3ebf3"/>
+          <path d="M0 90 H400 M0 180 H400 M120 0 V300 M260 0 V300" stroke="#cfdae6" stroke-width="10" fill="none"/>
+          <path d="M0 135 H400 M60 0 V300 M340 0 V300" stroke="#dbe4ee" stroke-width="5" fill="none"/>
+          <rect x="150" y="105" width="100" height="60" rx="8" fill="#bcd0c0"/>
+          <circle cx="200" cy="135" r="20" fill="#a6c4ad"/>
+          <rect x="20" y="20" width="70" height="50" rx="6" fill="#d3dde8"/>
+          <rect x="290" y="200" width="90" height="70" rx="6" fill="#d3dde8"/>
+        </svg>
+        ${pins}
+        <div class="map-legend">
+          <div class="lg-item"><span class="lg-dot" style="background:#ff9500"></span>Na zadatku</div>
+          <div class="lg-item"><span class="lg-dot" style="background:#34c759"></span>Slobodan</div>
+          <div class="lg-item"><span class="lg-dot" style="background:#8e8e93"></span>Off</div>
+        </div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:14px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg>
+      <div><div class="note-t">Lokacije uživo</div><div class="note-b">Pozicije se temelje na zadnjoj prijavljenoj lokaciji radnika (GPS s terminala). Klikni na radnika da vidiš detalje i dodijeliš mu najbliži otvoreni zadatak.</div></div></div>`;
+}
+function renderShifts(){
+  const ws=workers(), grid=SHIFTS[activeSvc];
+  let head=`<div></div>`+DAYS.map(d=>`<div class="sh-head">${d}</div>`).join('');
+  let rows=ws.map((w,wi)=>{
+    const cells=grid[wi].map((code,di)=>`<div class="sh-cell sh-${code}" onclick="cycleShift(${wi},${di})" title="${SHIFT_NAMES[code]}">${code==='O'?'–':code}</div>`).join('');
+    return `<div class="sh-name"><div class="wk-av" style="width:30px;height:30px;font-size:11px;background:${w.bg};color:${w.tc}">${w.av}</div>${w.name}</div>${cells}`;
+  }).join('');
+  const avail=DAYS.map((_,di)=>ws.filter((_,wi)=>grid[wi][di]!=='O').length);
+  let availRow=`<div class="sh-name" style="color:var(--ink3);font-size:11px;font-weight:700;text-transform:uppercase">Dostupno</div>`+avail.map(a=>`<div class="sh-avail">${a} 👷</div>`).join('');
+  $('sc-shifts').innerHTML=`
+    <div class="card"><div class="card-h"><div class="card-t">Sedmični raspored — ${D().label}</div>
+      <div style="display:flex;gap:14px"><span class="lg-item"><span class="lg-dot" style="background:#ff9500"></span>J</span><span class="lg-item"><span class="lg-dot" style="background:#007aff"></span>P</span><span class="lg-item"><span class="lg-dot" style="background:#5856d6"></span>N</span></div></div>
+      <div class="shift-grid">${head}${rows}${availRow}</div>
+    </div>
+    <div class="note" style="margin-top:14px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg>
+      <div><div class="note-t">Planiranje kapaciteta</div><div class="note-b">Klikni ćeliju da promijeniš smjenu (Jutarnja → Popodnevna → Noćna → Slobodno). Red "Dostupno" pokazuje koliko radnika imaš svaki dan — izbjegavaj dane s premalo pokrivenosti.</div></div></div>`;
+}
+function renderPerf(){
+  const ws=[...workers()].filter(w=>w.status!=='off').sort((a,b)=>b.done-a.done);
+  const max=Math.max(...ws.map(w=>w.done),1);
+  setTimeout(()=>{
+    if(window._pf)window._pf.destroy();
+    const ctx=$('pfChart');if(!ctx)return;
+    window._pf=new Chart(ctx,{type:'bar',data:{labels:ws.map(w=>w.name.split(' ')[0]),datasets:[{label:'Riješeno',data:ws.map(w=>w.done),backgroundColor:'#1a7a34',borderRadius:6,maxBarThickness:34}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#0000000a'}},x:{grid:{display:false}}}}});
+  },40);
+  const allW=workers();
+  $('sc-perf').innerHTML=`
+    <div class="grid2b">
+      <div class="card"><div class="card-h"><div class="card-t">Riješeni zadaci (mjesec)</div></div><div class="chart-box sm"><canvas id="pfChart"></canvas></div></div>
+      <div class="card"><div class="card-h"><div class="card-t">SLA poštovanje po radniku</div></div>
+        ${ws.map(w=>{const col=w.sla>=90?'var(--brand)':w.sla>=80?'var(--orange)':'var(--red)';return `<div class="pf-row"><div class="pf-av" style="background:${w.bg};color:${w.tc}">${w.av}</div><div class="pf-name">${w.name}</div><div class="pf-bar-bg"><div class="pf-bar" style="width:${w.sla}%;background:${col}"></div></div><div class="pf-val" style="color:${col}">${w.sla}%</div></div>`;}).join('')}
+      </div>
+    </div>
+    <div class="card"><div class="card-h"><div class="card-t">Detaljni učinak</div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Radnik</th><th>Uloga</th><th>Riješeno</th><th>Aktivnih</th><th>SLA</th><th>Status</th></tr></thead>
+      <tbody>${allW.map(w=>{const tag=w.sla>=90?['ok','Odličan']:w.sla>=80?['warn','Dobar']:w.status==='off'?['','—']:['bad','Pratiti'];return `<tr><td style="font-weight:600">${w.name}</td><td>${w.role}</td><td>${w.done}</td><td>${w.tasks}</td><td style="font-weight:700">${w.sla}%</td><td>${tag[0]?`<span class="tag ${tag[0]}">${tag[1]}</span>`:'<span style="color:var(--ink3)">Off</span>'}</td></tr>`;}).join('')}</tbody></table></div>
+    </div>`;
+}
+
+/* ═══════════ FAILURE ANALYTICS ═══════════ */
+const ANALYTICS={
+  putevi:{
+    monthly:[38,42,51,67,59,54], // pothole season peaks in spring (Mar-Apr)
+    weekday:[19,17,16,15,21,9,6], // Pon..Ned — weekdays heavier
+    hotspots:[
+      {addr:'Titova 8, Centar',count:6,last:4,gap:11,zone:'centar'},
+      {addr:'Bul. Meše Selimovića',count:5,last:9,gap:14,zone:'novigrad'},
+      {addr:'Ferhadija 12, Centar',count:4,last:2,gap:18,zone:'centar'},
+      {addr:'Zmaj od Bosne 44',count:3,last:12,gap:22,zone:'novosa'},
+      {addr:'Obala Kulina bana',count:2,last:20,gap:35,zone:'starigrad'},
+    ]},
+  voda:{
+    monthly:[44,61,52,33,28,31], // leaks spike after winter frost (Jan-Feb)
+    weekday:[15,14,13,12,14,11,9],
+    hotspots:[
+      {addr:'Titova 34, Centar',count:5,last:1,gap:9,zone:'centar'},
+      {addr:'Hrasno, Novo Sarajevo',count:4,last:7,gap:13,zone:'novosa'},
+      {addr:'Grbavica, magistrala',count:4,last:5,gap:16,zone:'novosa'},
+      {addr:'Koševo 18, Centar',count:2,last:11,gap:28,zone:'centar'},
+    ]},
+  elektro:{
+    monthly:[29,31,34,40,55,62], // lighting failures rise into summer storms
+    weekday:[12,13,11,14,16,10,8],
+    hotspots:[
+      {addr:'Ferhadija (4 stuba)',count:7,last:1,gap:8,zone:'centar'},
+      {addr:'Titova 12 — trafo',count:4,last:6,gap:15,zone:'centar'},
+      {addr:'Bul. Meše S. 88',count:3,last:14,gap:24,zone:'novigrad'},
+      {addr:'Grbavica naselje',count:2,last:18,gap:30,zone:'novosa'},
+    ]},
+  cistoca:{
+    monthly:[51,48,57,63,71,68], // illegal dumping grows in warm months
+    weekday:[14,12,13,11,18,22,16], // weekends heavier (markets, events)
+    hotspots:[
+      {addr:'Ferhadija 8 — deponija',count:8,last:1,gap:6,zone:'centar'},
+      {addr:'Bul. Meše S. kontejneri',count:5,last:3,gap:10,zone:'novigrad'},
+      {addr:'Baščaršija, Stari Grad',count:4,last:5,gap:14,zone:'starigrad'},
+      {addr:'Grbavica, Novo Sarajevo',count:3,last:9,gap:19,zone:'novosa'},
+    ]},
+};
+function renderAnalytics(){
+  const a=ANALYTICS[activeSvc], d=D();
+  const total=a.monthly.reduce((s,x)=>s+x,0);
+  const avg=Math.round(total/a.monthly.length);
+  const repeat=a.hotspots.filter(h=>h.count>=2).length;
+  const chronic=a.hotspots.filter(h=>h.count>=4).length;
+  // zone distribution from hotspots weighted by count
+  const zc={}; a.hotspots.forEach(h=>zc[h.zone]=(zc[h.zone]||0)+h.count*4);
+  const zoneArr=Object.entries(ZONES).map(([k,n])=>({n,v:zc[k]||Math.floor(total*0.08)}));
+  const trendDir=a.monthly[5]>a.monthly[4]?'▲ raste':'▼ pada';
+  $('sc-analytics').innerHTML=`
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--bluel)"><svg viewBox="0 0 24 24" style="fill:var(--blue)"><path d="M3 13h2v7H3zm4-6h2v13H7zm4 3h2v10h-2zm4-7h2v17h-2z"/></svg></div><div class="kpi-lbl">Kvarova (6 mj.)</div></div><div class="kpi-val">${total}</div><div class="kpi-delta flat">${d.label}</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--orangel)"><svg viewBox="0 0 24 24" style="fill:var(--orange)"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 11H9v-2h2V7h2z"/></svg></div><div class="kpi-lbl">Prosj. mjesečno</div></div><div class="kpi-val">${avg}</div><div class="kpi-delta ${a.monthly[5]>a.monthly[4]?'down':'up'}">${trendDir}</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--redl)"><svg viewBox="0 0 24 24" style="fill:var(--red)"><path d="M12 2C8 2 5 5 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg></div><div class="kpi-lbl">Crne tačke</div></div><div class="kpi-val" style="color:${repeat?'var(--red)':'var(--ink)'}">${repeat}</div><div class="kpi-delta down">${chronic} hroničnih</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--purplel)"><svg viewBox="0 0 24 24" style="fill:var(--purple)"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14z"/></svg></div><div class="kpi-lbl">Vršni mjesec</div></div><div class="kpi-val" style="font-size:24px">${MONTHS[a.monthly.indexOf(Math.max(...a.monthly))]}</div><div class="kpi-delta flat">${Math.max(...a.monthly)} kvarova</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-t">Učestalost kvarova kroz vrijeme</div><div class="card-badge">6 mjeseci</div></div><div class="chart-box"><canvas id="anTrend"></canvas></div></div>
+      <div class="card"><div class="card-h"><div class="card-t">Po danu u sedmici</div></div><div class="chart-box"><canvas id="anWeek"></canvas></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-t">🔥 Crne tačke — ponovljeni kvarovi</div><div class="card-badge">${a.hotspots.length} lokacija</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Lokacija</th><th>Broj kvarova</th><th>Zadnji</th><th>Prosj. razmak</th><th>Preporuka</th></tr></thead>
+        <tbody>${a.hotspots.map(h=>{const rec=h.count>=4?['bad','Trajni popravak']:h.count>=2?['warn','Pratiti']:['ok','OK'];return `<tr><td style="font-weight:600">${h.addr}<div style="font-size:11px;color:var(--ink3);font-weight:500">${ZONES[h.zone]}</div></td><td><b style="font-size:15px">${h.count}×</b></td><td>prije ${h.last}d</td><td>~${h.gap} dana</td><td><span class="tag ${rec[0]}">${rec[1]}</span></td></tr>`;}).join('')}</tbody></table></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="card-t">Po zoni</div></div><div class="chart-box"><canvas id="anZone"></canvas></div></div>
+    </div>
+    <div class="note"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg>
+      <div><div class="note-t">Šta crne tačke znače</div><div class="note-b">Lokacija s 4+ kvarova u kratkom razmaku obično znači da krpljenje ne pomaže — isplativiji je trajni popravak. "Prosj. razmak" pokazuje koliko brzo se kvar vraća. Napomena: učestalost dijelom prati i aktivnost prijavljivanja, ne samo stvarno stanje infrastrukture.</div></div></div>`;
+  setTimeout(()=>{
+    ['_anT','_anW','_anZ'].forEach(k=>{if(window[k])window[k].destroy();});
+    const ct=$('anTrend');if(!ct)return;
+    window._anT=new Chart(ct,{type:'line',data:{labels:MONTHS,datasets:[{label:'Kvarova',data:a.monthly,borderColor:d.color,backgroundColor:d.color+'22',fill:true,tension:.35,borderWidth:3,pointRadius:4,pointBackgroundColor:d.color}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#0000000a'}},x:{grid:{display:false}}}}});
+    window._anW=new Chart($('anWeek'),{type:'bar',data:{labels:DAYS,datasets:[{data:a.weekday,backgroundColor:a.weekday.map(v=>v>=Math.max(...a.weekday)*0.85?d.color:d.color+'88'),borderRadius:5,maxBarThickness:30}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#0000000a'}},x:{grid:{display:false}}}}});
+    window._anZ=new Chart($('anZone'),{type:'doughnut',data:{labels:zoneArr.map(z=>z.n),datasets:[{data:zoneArr.map(z=>z.v),backgroundColor:['#ff3b30','#ff9500','#007aff','#34c759'],borderWidth:2,borderColor:'#fff'}]},options:{maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:10,usePointStyle:true,padding:11,font:{size:11}}}}}});
+  },40);
+}
+
+/* ═══════════ DISPATCHER ACTIONS ═══════════ */
+function openAssign(oid){
+  const o=getO(oid);if(!o)return;
+  const free=workers().filter(w=>w.status!=='off');
+  $('modal').innerHTML=`<div class="modal-h">Dodijeli zadatak</div><div class="modal-s">${o.id} · ${o.addr}</div>
+    ${free.map(w=>`<div class="opt" onclick="assign('${oid}','${w.id}')"><div class="wk-av" style="background:${w.bg};color:${w.tc}">${w.av}</div><div style="flex:1"><div class="wk-n">${w.name}</div><div class="wk-r">${w.role} · ${w.loc}</div></div><span class="wk-st st-${w.status}">${w.status==='free'?'Slobodan':w.tasks+' zad.'}</span></div>`).join('')}
+    <button class="btn ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="closeModal()">Odustani</button>`;
+  openModal();
+}
+function assign(oid,wid){
+  const o=getO(oid),w=getW(wid);if(!o||!w)return;
+  o.worker=wid;o.status='prog';w.tasks++;if(w.status==='free')w.status='busy';
+  closeModal();renderDispGroup();toast('✓ Dodijeljeno: '+w.name);
+}
+function markDone(oid){
+  const o=getO(oid);if(!o)return;
+  o.status='done';if(!o.cost)o.cost=80+Math.floor(Math.random()*200);
+  if(o.worker){const w=getW(o.worker);if(w){w.tasks=Math.max(0,w.tasks-1);w.done++;if(w.tasks===0)w.status='free';}}
+  renderDispGroup();toast('✓ Zadatak završen');
+}
+function openWorker(wid){
+  const w=getW(wid);if(!w)return;
+  const newO=orders().filter(o=>o.status==='new');
+  $('modal').innerHTML=`<div class="modal-h">${w.name}</div><div class="modal-s">${w.role} · ${w.loc} · ${w.status==='busy'?w.tasks+' aktivnih':w.status==='free'?'slobodan':'off duty'}</div>
+    <div class="kpi-row" style="grid-template-columns:1fr 1fr;margin-bottom:16px"><div class="kpi"><div class="kpi-lbl">Riješeno</div><div class="kpi-val">${w.done}</div></div><div class="kpi"><div class="kpi-lbl">SLA</div><div class="kpi-val">${w.sla}%</div></div></div>
+    <div class="card-t" style="font-size:14px;margin-bottom:10px">Dodijeli najbliži zadatak</div>
+    ${newO.length?newO.slice(0,4).map(o=>`<div class="opt" onclick="assign('${o.id}','${wid}')"><div style="flex:1"><div class="wk-n">${(cats()[o.cat]||{}).n||o.cat} · ${o.id}</div><div class="wk-r">📍 ${o.addr}</div></div><span class="chip ${PRI[o.pri].c}">${PRI[o.pri].l}</span></div>`).join(''):'<div class="empty" style="padding:20px 0">Nema novih zadataka</div>'}
+    <button class="btn ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="closeModal()">Zatvori</button>`;
+  openModal();
+}
+function openDetail(oid){
+  const o=getO(oid);if(!o)return;
+  const c=cats()[o.cat]||Object.values(cats())[0];const w=o.worker?getW(o.worker):null;
+  const rem=o.ts+o.sla*3600000-Date.now();
+  $('modal').innerHTML=`<div class="modal-h">${c.n}</div><div class="modal-s">${o.id} · prijavio/la ${o.citizen}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><span class="chip ${PRI[o.pri].c}">${PRI[o.pri].l}</span><span class="chip ${ST[o.status].c}">${ST[o.status].l}</span><span class="chip" style="background:var(--bg);color:var(--ink2)">▲ ${o.votes} glasova</span></div>
+    <div class="wk" style="margin-bottom:8px"><div style="font-size:13px"><b>📍 Adresa:</b> ${o.addr}</div></div>
+    <div class="wk" style="margin-bottom:8px"><div style="font-size:13px"><b>⏱ SLA:</b> ${o.sla}h · ${o.status==='done'?'riješeno':(rem<0?'<span style="color:var(--red)">rok istekao</span>':'ostalo '+fmtCD(rem))}</div></div>
+    ${w?`<div class="wk" style="margin-bottom:8px"><div style="font-size:13px"><b>👷 Radnik:</b> ${w.name}</div></div>`:''}
+    ${o.cost?`<div class="wk" style="margin-bottom:8px"><div style="font-size:13px"><b>💶 Trošak:</b> ${o.cost} KM</div></div>`:''}
+    ${o.note?`<div class="wk" style="margin-bottom:14px"><div style="font-size:13px;font-style:italic">"${o.note}"</div></div>`:''}
+    <div style="display:flex;gap:8px">
+      ${o.status==='new'?`<button class="btn primary" style="flex:1;justify-content:center" onclick="closeModal();openAssign('${oid}')">Dodijeli radnika</button>`:''}
+      ${o.status==='prog'?`<button class="btn primary" style="flex:1;justify-content:center" onclick="closeModal();markDone('${oid}')">Označi riješeno</button>`:''}
+      <button class="btn ghost" style="flex:1;justify-content:center" onclick="openTransfer('${oid}')">Proslijedi službi</button>
+    </div>`;
+  openModal();
+}
+function openTransfer(oid){
+  const o=getO(oid);if(!o)return;
+  const targets=SVC_KEYS.filter(s=>s!==activeSvc);
+  $('modal').innerHTML=`<div class="modal-h">Proslijedi drugoj službi</div><div class="modal-s">${o.id} · ${o.addr}</div>
+    <div class="note" style="margin-bottom:14px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg><div><div class="note-b">Zadatak će biti uklonjen iz ${D().label} i dodijeljen odabranoj službi kao novi nedodijeljeni zadatak.</div></div></div>
+    ${targets.map(s=>`<div class="opt" onclick="transfer('${oid}','${s}')"><span class="dot lg-dot" style="background:${SVC_DATA[s].color};width:12px;height:12px"></span><div style="flex:1"><div class="wk-n">${SVC_DATA[s].label}</div><div class="wk-r">${SVC_DATA[s].orders.filter(x=>x.status!=='done').length} aktivnih zadataka</div></div><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:var(--ink3)"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></div>`).join('')}
+    <button class="btn ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="closeModal()">Odustani</button>`;
+  openModal();
+}
+function transfer(oid,target){
+  const arr=orders(),idx=arr.findIndex(o=>o.id===oid);if(idx<0)return;
+  const o=arr.splice(idx,1)[0];
+  const tcat=Object.keys(SVC_DATA[target].cats)[0];
+  o.cat=tcat;o.status='new';o.worker=null;o.cost=null;
+  SVC_DATA[target].orders.unshift(o);
+  closeModal();renderDispGroup();
+  toast('➡ Proslijeđeno: '+SVC_DATA[target].label);
+}
+function cycleShift(wi,di){
+  const order=['J','P','N','O'];
+  const cur=SHIFTS[activeSvc][wi][di];
+  SHIFTS[activeSvc][wi][di]=order[(order.indexOf(cur)+1)%4];
+  renderShifts();
+}
+function openNewTask(){
+  const cs=Object.entries(cats());
+  $('modal').innerHTML=`<div class="modal-h">Novi zadatak</div><div class="modal-s">${D().label}</div>
+    <div class="card-t" style="font-size:13px;margin-bottom:8px">Kategorija</div>
+    ${cs.map(([k,c])=>`<div class="opt" onclick="window._nt={cat:'${k}'};document.querySelectorAll('#modal .opt').forEach(o=>o.style.borderColor='var(--sep)');this.style.borderColor='var(--brand)';this.style.background='var(--brand-l)'"><div class="task-ic" style="width:34px;height:34px;background:${c.bg}"><svg viewBox="0 0 24 24" style="fill:${c.c};width:17px;height:17px">${c.i}</svg></div><div class="wk-n">${c.n}</div></div>`).join('')}
+    <input id="ntAddr" placeholder="Adresa (npr. Titova 10, Centar)" style="width:100%;margin:10px 0;padding:12px 14px;border:.5px solid var(--sep);border-radius:13px;font-size:14px;outline:none">
+    <div style="display:flex;gap:8px;margin-bottom:14px"><select id="ntPri" class="pill-sel" style="flex:1"><option value="urgent">Hitno (4h)</option><option value="med" selected>Srednje (24h)</option><option value="low">Nisko (72h)</option></select></div>
+    <button class="btn primary" style="width:100%;justify-content:center" onclick="addTask()">Kreiraj zadatak</button>`;
+  window._nt=null;openModal();
+}
+function addTask(){
+  if(!window._nt){toast('Odaberi kategoriju');return;}
+  const addr=$('ntAddr').value.trim()||'Nepoznata adresa';
+  const pri=$('ntPri').value, slaMap={urgent:4,med:24,low:72};
+  const prefix={putevi:'WO',voda:'WV',elektro:'EP',cistoca:'JR'}[activeSvc];
+  const o={id:prefix+'-'+Math.floor(1000+Math.random()*9000),cat:window._nt.cat,addr,zone:'centar',status:'new',pri,votes:1,note:'Ručno kreirano u dispečeru',citizen:'Dispečer',ts:Date.now(),worker:null,cost:null,sla:slaMap[pri]};
+  orders().unshift(o);closeModal();renderDispGroup();toast('✓ Zadatak kreiran: '+o.id);
+}
+function openModal(){$('modalBg').classList.add('on');}
+function closeModal(){$('modalBg').classList.remove('on');}
+
+/* SLA live tick */
+function startSlaTick(){stopSlaTick();slaTimer=setInterval(()=>{if(current==='sla')renderSla();refreshBadges();},20000);}
+function stopSlaTick(){if(slaTimer){clearInterval(slaTimer);slaTimer=null;}}
+
+/* ═══════════ GRAD (city) RENDERERS ═══════════ */
+const SERVICES=[
+  {n:'JKP Vodovod',rep:241,res:212,sla:88,time:'1.8d',csat:4.4},
+  {n:'JP Elektroprivreda',rep:198,res:147,sla:74,time:'2.9d',csat:4.0},
+  {n:'JKP Putevi',rep:387,res:236,sla:61,time:'4.1d',csat:3.6},
+  {n:'JKP Čistoća',rep:312,res:165,sla:53,time:'3.4d',csat:3.8},
+  {n:'Komunalna policija',rep:146,res:58,sla:40,time:'5.2d',csat:3.2},
+];
+const CATS_CITY=[{n:'Putevi / rupe',v:387,c:'#f59000'},{n:'Otpad / smeće',v:312,c:'#16a34a'},{n:'Curenje vode',v:241,c:'#0891b2'},{n:'Rasvjeta',v:198,c:'#e24b4a'},{n:'Predmeti / ostalo',v:146,c:'#7c3aed'}];
+const ZONES_CITY=[{n:'Centar',c:142,col:'#ff3b30'},{n:'Novo Sarajevo',c:118,col:'#ff9500'},{n:'Novi Grad',c:97,col:'#ff9500'},{n:'Stari Grad',c:64,col:'#34c759'},{n:'Ilidža',c:51,col:'#34c759'},{n:'Vogošća',c:33,col:'#1a7a34'}];
+const MONTHS=['Dec','Jan','Feb','Mar','Apr','Maj'],REP=[176,198,221,243,225,221],RES=[121,142,158,151,167,161],CST=[3.6,3.7,3.8,3.9,4.0,4.1],RAT=[19,21,20,23,22,24];
+const DIST=[{s:'5 ★',n:148,p:47},{s:'4 ★',n:92,p:29},{s:'3 ★',n:38,p:12},{s:'2 ★',n:20,p:7},{s:'1 ★',n:14,p:5}];
+
+/* CityScore — Boston-style index: actual / target, averaged (1.0 = na cilju) */
+const CITYSCORE=[
+  {n:'Rupe popravljene u roku (1 dan)',act:73,tgt:80,unit:'%'},
+  {n:'Rasvjeta u roku (10 dana)',act:81,tgt:80,unit:'%'},
+  {n:'Otpad — odgovor u roku (2 dana)',act:68,tgt:80,unit:'%'},
+  {n:'Curenje vode — hitno (4h)',act:88,tgt:80,unit:'%'},
+  {n:'Zadovoljstvo građana (CSAT)',act:4.1,tgt:4.0,unit:'/5'},
+  {n:'Prijave riješene u roku (ukupno)',act:73,tgt:75,unit:'%'},
+];
+/* Equity — zone population (Sarajevo općine, približno) + reports + resolution time */
+const EQUITY=[
+  {z:'Centar',pop:55,rep:142,res:2.4,proactive:18},
+  {z:'Novo Sarajevo',pop:64,rep:118,res:3.1,proactive:22},
+  {z:'Novi Grad',pop:118,rep:97,res:4.6,proactive:14},
+  {z:'Stari Grad',pop:36,rep:64,res:2.8,proactive:20},
+  {z:'Ilidža',pop:66,rep:51,res:4.2,proactive:12},
+  {z:'Vogošća',pop:26,rep:33,res:3.6,proactive:16},
+];
+/* Forecast — seasonal projection per category (hist 6 mj + 3 mj prognoza) */
+const FORECAST=[
+  {n:'Rupe na putu',c:'#f59000',hist:[38,42,51,67,59,54],fc:[44,38,33],reason:'pad nakon proljetnog vrha'},
+  {n:'Curenje vode',c:'#0891b2',hist:[44,61,52,33,28,31],fc:[35,42,58],reason:'rast s jesenskim zahladnjenjem'},
+  {n:'Rasvjeta',c:'#e24b4a',hist:[29,31,34,40,55,62],fc:[68,71,66],reason:'ljetne oluje'},
+  {n:'Otpad',c:'#16a34a',hist:[51,48,57,63,71,68],fc:[64,55,49],reason:'pad krajem sezone'},
+];
+const FC_MONTHS=['Jun','Jul','Avg'];
+const ANOMALIES=[
+  {sev:'high',zone:'Hrasno, Novo Sarajevo',cat:'Curenje vode',txt:'+180% prijava u 48h — mogući kvar na glavnoj cijevi',act:'Hitna inspekcija mreže'},
+  {sev:'med',zone:'Ferhadija, Centar',cat:'Otpad',txt:'+95% prijava ove sedmice — moguća ilegalna deponija',act:'Pojačan nadzor + kamere'},
+  {sev:'low',zone:'Bul. Meše S.',cat:'Rasvjeta',txt:'Postupan rast 3 sedmice zaredom',act:'Planirati pregled trafo-linije'},
+];
+const MAINT_RISK=[
+  {asset:'Vodovodne cijevi — Hrasno',risk:84,reason:'5 kvarova / sezona + zahladnjenje',rec:'Zamjena dionice'},
+  {asset:'Trafostanica — Titova 12',risk:71,reason:'4 kvara u 3 mj, raste opterećenje',rec:'Preventivni servis'},
+  {asset:'Kolovoz — Bul. Meše S.',risk:63,reason:'Ponovljene rupe, freeze-thaw',rec:'Presvlačenje asfalta'},
+  {asset:'Rasvjeta — Ferhadija',risk:48,reason:'Stari stubovi, čest kvar',rec:'Modernizacija LED'},
+];
+let gradBuilt=false,gcharts={};
+function renderGrad(){
+  if(current==='exec')buildExec();
+  if(current==='equity')buildEquity();
+  if(current==='forecast')buildForecast();
+  if(current==='csat')buildCsat();
+  if(current==='svc')buildSvc();
+}
+function buildExec(){
+  // CityScore: prosjek (stvarno/cilj) — 1.0 = na cilju
+  const ratios=CITYSCORE.map(m=>m.act/m.tgt);
+  const score=ratios.reduce((s,x)=>s+x,0)/ratios.length;
+  const scoreCol=score>=1?'var(--brand)':score>=0.95?'var(--orange)':'var(--red)';
+  $('sc-exec').innerHTML=`
+    <div class="card" style="margin-bottom:14px;background:linear-gradient(135deg,#ffffff,#f3faf5)">
+      <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap">
+        <div style="text-align:center;min-width:150px">
+          <div style="font-size:13px;font-weight:600;color:var(--ink3)">CityScore — danas</div>
+          <div style="font-size:58px;font-weight:800;letter-spacing:-2.5px;line-height:1;color:${scoreCol}">${score.toFixed(2)}</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:4px">1.00 = sve na cilju</div>
+          <div class="kpi-delta ${score>=1?'up':'down'}" style="margin-top:6px">${score>=1?'▲ iznad cilja':'▼ ispod cilja'}</div>
+        </div>
+        <div style="flex:1;min-width:280px">
+          ${CITYSCORE.map(m=>{const r=m.act/m.tgt;const col=r>=1?'var(--brand)':r>=0.92?'var(--orange)':'var(--red)';return `<div style="display:flex;align-items:center;gap:10px;padding:5px 0"><div style="flex:1;font-size:12.5px;font-weight:500">${m.n}</div><div style="width:120px;height:7px;border-radius:4px;background:var(--bg);overflow:hidden"><div style="height:100%;width:${Math.min(100,r*80)}%;border-radius:4px;background:${col}"></div></div><div style="width:54px;text-align:right;font-size:12px;font-weight:700;color:${col}">${m.act}${m.unit} <span style="color:var(--ink4);font-weight:500">/${m.tgt}</span></div></div>`;}).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--greenl)"><svg viewBox="0 0 24 24" style="fill:var(--brand)"><path d="M3 13h2v7H3zm4-6h2v13H7zm4 3h2v10h-2zm4-7h2v17h-2z"/></svg></div><div class="kpi-lbl">Ukupno prijava</div></div><div class="kpi-val">1.284</div><div class="kpi-delta up">▲ 12% vs. prošli mj.</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--bluel)"><svg viewBox="0 0 24 24" style="fill:var(--blue)"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><div class="kpi-lbl">SLA poštovanje</div></div><div class="kpi-val">73%</div><div class="kpi-delta up">▲ 5% u roku</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--redl)"><svg viewBox="0 0 24 24" style="fill:var(--red)"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-2 14H7v-2h10zm0-4H7v-2h10zm0-4H7V7h10z"/></svg></div><div class="kpi-lbl">Backlog &gt; 30 dana</div></div><div class="kpi-val" style="color:var(--red)">47</div><div class="kpi-delta down">starih otvorenih prijava</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--purplel)"><svg viewBox="0 0 24 24" style="fill:var(--purple)"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></div><div class="kpi-lbl">Zadovoljstvo</div></div><div class="kpi-val">4.1<small>/5</small></div><div class="kpi-delta flat">312 ocjena</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-t">Prijave i rješavanje po mjesecu</div><div class="card-badge">6 mjeseci</div></div><div class="chart-box"><canvas id="gTrend"></canvas></div></div>
+      <div class="card"><div class="card-h"><div class="card-t">Po kategoriji</div></div><div class="chart-box"><canvas id="gCat"></canvas></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-t">SLA poštovanje po službi</div><div class="card-badge">% u roku</div></div>
+        ${SERVICES.map(s=>{const col=s.sla>=75?'var(--brand)':s.sla>=55?'var(--orange)':'var(--red)';return `<div class="pf-row"><div class="pf-name" style="width:150px">${s.n}</div><div class="pf-bar-bg"><div class="pf-bar" style="width:${s.sla}%;background:${col}"></div></div><div class="pf-val" style="color:${col}">${s.sla}%</div></div>`;}).join('')}
+      </div>
+      <div class="card"><div class="card-h"><div class="card-t">Najopterećenije zone</div></div>
+        <div class="zone-grid">${ZONES_CITY.map(z=>`<div class="zone" style="background:${z.col}14;border-color:${z.col}33"><div class="zone-n">${z.n}</div><div class="zone-c" style="color:${z.col}">${z.c}</div><div class="zone-s">prijava</div></div>`).join('')}</div>
+        <div class="note" style="margin-top:14px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg><div><div class="note-t">Kako čitati zone</div><div class="note-b">Brojevi pokazuju gdje se najviše <b>prijavljuje</b> — to prati gdje su aktivni korisnici, ne nužno gdje su problemi objektivno najteži.</div></div></div>
+      </div>
+    </div>`;
+  setTimeout(()=>{
+    if(gcharts.t)gcharts.t.destroy();if(gcharts.c)gcharts.c.destroy();
+    gcharts.t=new Chart($('gTrend'),{type:'bar',data:{labels:MONTHS,datasets:[{label:'Prijavljeno',data:REP,backgroundColor:'#007affcc',borderRadius:5,maxBarThickness:24},{label:'Riješeno',data:RES,backgroundColor:'#1a7a34',borderRadius:5,maxBarThickness:24}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,usePointStyle:true}}},scales:{y:{beginAtZero:true,grid:{color:'#0000000a'}},x:{grid:{display:false}}}}});
+    gcharts.c=new Chart($('gCat'),{type:'doughnut',data:{labels:CATS_CITY.map(c=>c.n),datasets:[{data:CATS_CITY.map(c=>c.v),backgroundColor:CATS_CITY.map(c=>c.c),borderWidth:2,borderColor:'#fff'}]},options:{maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right',labels:{boxWidth:10,usePointStyle:true,padding:11,font:{size:11}}}}}});
+  },40);
+}
+function buildEquity(){
+  const totalRep=EQUITY.reduce((s,z)=>s+z.rep,0), totalPop=EQUITY.reduce((s,z)=>s+z.pop,0);
+  const rows=EQUITY.map(z=>{
+    const perK=z.rep/z.pop; const expected=Math.round(z.pop/totalPop*totalRep); const gap=z.rep-expected;
+    return {...z,perK,expected,gap};
+  });
+  const under=[...rows].sort((a,b)=>a.gap-b.gap)[0]; // most under-reported
+  const resVals=rows.map(r=>r.res); const resGap=(Math.max(...resVals)-Math.min(...resVals)).toFixed(1);
+  const slow=[...rows].sort((a,b)=>b.res-a.res)[0], fast=[...rows].sort((a,b)=>a.res-b.res)[0];
+  $('sc-equity').innerHTML=`
+    <div class="lead">Da li grad pruža uslugu <b>ravnomjerno</b> po zonama? Sirov broj prijava pokazuje ko prijavljuje, ne gdje su problemi. Zato gledamo prijave po glavi stanovnika, očekivane vs. stvarne prijave i razliku u vremenu rješavanja između zona.</div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--redl)"><svg viewBox="0 0 24 24" style="fill:var(--red)"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 100 20 10 10 0 000-20z"/></svg></div><div class="kpi-lbl">Najviše podprijavljeno</div></div><div class="kpi-val" style="font-size:22px">${under.z}</div><div class="kpi-delta down">${under.gap} ispod očekivanog</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--orangel)"><svg viewBox="0 0 24 24" style="fill:var(--orange)"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"/></svg></div><div class="kpi-lbl">Razlika u rješavanju</div></div><div class="kpi-val">${resGap}<small> dana</small></div><div class="kpi-delta down">najbrža vs. najsporija zona</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--greenl)"><svg viewBox="0 0 24 24" style="fill:var(--brand)"><path d="M13 2L3 14h7v8l10-12h-7z"/></svg></div><div class="kpi-lbl">Najbrža zona</div></div><div class="kpi-val" style="font-size:22px">${fast.z}</div><div class="kpi-delta up">${fast.res} dana prosjek</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-ic" style="background:var(--bluel)"><svg viewBox="0 0 24 24" style="fill:var(--blue)"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg></div><div class="kpi-lbl">Najsporija zona</div></div><div class="kpi-val" style="font-size:22px">${slow.z}</div><div class="kpi-delta down">${slow.res} dana prosjek</div></div>
+    </div>
+    <div class="grid2b">
+      <div class="card"><div class="card-h"><div class="card-t">Prijave po 1.000 stanovnika</div></div><div class="chart-box sm"><canvas id="gEqCap"></canvas></div></div>
+      <div class="card"><div class="card-h"><div class="card-t">Prosj. vrijeme rješavanja po zoni</div></div><div class="chart-box sm"><canvas id="gEqRes"></canvas></div></div>
+    </div>
+    <div class="card"><div class="card-h"><div class="card-t">Detalji po zoni</div><div class="card-badge">očekivano vs. stvarno</div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Zona</th><th>Stanovnika</th><th>Prijave</th><th>Po 1.000</th><th>Očekivano</th><th>Odstupanje</th><th>Vrijeme</th><th>Proaktivno</th></tr></thead>
+      <tbody>${rows.map(r=>{const tag=r.gap<-15?['bad','Podprijavljeno']:r.gap>15?['warn','Power-useri']:['ok','Uravnoteženo'];return `<tr><td style="font-weight:600">${r.z}</td><td>${r.pop}k</td><td>${r.rep}</td><td style="font-weight:700">${r.perK.toFixed(2)}</td><td>${r.expected}</td><td style="font-weight:700;color:${r.gap<0?'var(--red)':'var(--brand)'}">${r.gap>0?'+':''}${r.gap} <span class="tag ${tag[0]}" style="margin-left:4px">${tag[1]}</span></td><td>${r.res}d</td><td>${r.proactive}%</td></tr>`;}).join('')}</tbody></table></div>
+    </div>
+    <div class="note" style="margin-top:14px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg>
+      <div><div class="note-t">Zašto je ovo važno</div><div class="note-b">Zone koje prijavljuju <b>ispod očekivanog</b> (npr. ${under.z}) vjerovatno imaju problema koliko i druge, ali manje aktivnih prijavitelja — ne smiju ostati zapostavljene. Resurse usmjeravaj prema procijenjenoj potrebi, a ne sirovom broju prijava. Metoda korekcije podprijavljivanja temelji se na stopi duplih prijava istog problema (Cornell Tech, 2023).</div></div></div>`;
+  setTimeout(()=>{
+    if(gcharts.eqc)gcharts.eqc.destroy();if(gcharts.eqr)gcharts.eqr.destroy();
+    gcharts.eqc=new Chart($('gEqCap'),{type:'bar',data:{labels:rows.map(r=>r.z),datasets:[{data:rows.map(r=>+r.perK.toFixed(2)),backgroundColor:rows.map(r=>r.gap<-15?'#ff3b30':r.gap>15?'#ff9500':'#1a7a34'),borderRadius:5,maxBarThickness:34}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#0000000a'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+    gcharts.eqr=new Chart($('gEqRes'),{type:'bar',data:{labels:rows.map(r=>r.z),datasets:[{data:rows.map(r=>r.res),backgroundColor:rows.map(r=>r.res>=4?'#ff3b30':r.res>=3?'#ff9500':'#1a7a34'),borderRadius:5,maxBarThickness:34}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#0000000a'},title:{display:true,text:'dana'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  },40);
+}
+function buildForecast(){
+  const histTotal=[0,1,2,3,4,5].map(i=>FORECAST.reduce((s,f)=>s+f.hist[i],0));
+  const fcTotal=[0,1,2].map(j=>FORECAST.reduce((s,f)=>s+f.fc[j],0));
+  const allLabels=[...MONTHS,...FC_MONTHS];
+  const histDS=[...histTotal,null,null,null];
+  const fcDS=[null,null,null,null,null,histTotal[5],...fcTotal];
+  const sevMap={high:'crit',med:'warn',low:'ok'};
+  $('sc-forecast').innerHTML=`
+    <div class="lead">Predviđanja na osnovu sezonskih obrazaca i istorije kvarova. Pomažu da se ekipe, materijal i budžet pripreme <b>prije</b> vrha — umjesto reagovanja nakon što problem eskalira.</div>
+    <div class="grid2">
+      <div class="card"><div class="card-h"><div class="card-t">Prognoza ukupnih prijava</div><div class="card-badge">3 mj. unaprijed</div></div><div class="chart-box"><canvas id="gFc"></canvas></div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:8px">Puna linija = stvarni podaci · isprekidana = projekcija</div></div>
+      <div class="card"><div class="card-h"><div class="card-t">Sezonska kretanja po kategoriji</div></div>
+        ${FORECAST.map(f=>{const cur=f.hist[5],proj=f.fc[2],up=proj>cur;return `<div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:.5px solid var(--sep2)"><span class="lg-dot" style="background:${f.c};width:11px;height:11px"></span><div style="flex:1"><div style="font-size:13px;font-weight:600">${f.n}</div><div style="font-size:11px;color:var(--ink3)">${f.reason}</div></div><div style="font-size:14px;font-weight:700;color:${up?'var(--red)':'var(--brand)'}">${cur}→${proj} ${up?'▲':'▼'}</div></div>`;}).join('')}
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><div class="card-h"><div class="card-t">⚠ Detekcija anomalija</div><div class="card-badge">neuobičajeni skokovi</div></div>
+      ${ANOMALIES.map(a=>`<div class="alarm ${sevMap[a.sev]}"><div style="width:90px;flex-shrink:0;text-align:center"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:${a.sev==='high'?'var(--red)':a.sev==='med'?'var(--orange)':'var(--brand)'}">${a.sev==='high'?'Visok':a.sev==='med'?'Srednji':'Nizak'}</div></div><div class="alarm-main"><div class="alarm-t">${a.cat} · ${a.zone}</div><div class="alarm-m">${a.txt}</div></div><div style="font-size:12px;font-weight:600;color:var(--ink2);max-width:160px;text-align:right">→ ${a.act}</div></div>`).join('')}
+    </div>
+    <div class="card"><div class="card-h"><div class="card-t">🔧 Prediktivno održavanje — rizik kvara</div><div class="card-badge">naredni period</div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Imovina / lokacija</th><th>Rizik</th><th>Razlog</th><th>Preporuka</th></tr></thead>
+      <tbody>${MAINT_RISK.map(m=>{const col=m.risk>=75?'var(--red)':m.risk>=55?'var(--orange)':'var(--brand)';return `<tr><td style="font-weight:600">${m.asset}</td><td style="width:160px"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:8px;border-radius:4px;background:var(--bg);overflow:hidden"><div style="height:100%;width:${m.risk}%;background:${col};border-radius:4px"></div></div><b style="color:${col};width:34px">${m.risk}%</b></div></td><td style="color:var(--ink3)">${m.reason}</td><td><span class="tag ${m.risk>=75?'bad':m.risk>=55?'warn':'ok'}">${m.rec}</span></td></tr>`;}).join('')}</tbody></table></div>
+    </div>
+    <div class="note" style="margin-top:14px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg>
+      <div><div class="note-t">Kako koristiti prognoze</div><div class="note-b">Projekcije su procjene iz sezonskih obrazaca, ne garancije. Koristi ih za <b>raspored ekipa i nabavku materijala</b>, ali svaki prediktivni model provjeri stvarnim ishodima na terenu prije nego mu potpuno vjeruješ — modeli znaju i pogriješiti.</div></div></div>`;
+  setTimeout(()=>{
+    if(gcharts.fc)gcharts.fc.destroy();
+    gcharts.fc=new Chart($('gFc'),{data:{labels:allLabels,datasets:[
+      {type:'line',label:'Stvarno',data:histDS,borderColor:'#1a7a34',backgroundColor:'#1a7a341a',fill:true,tension:.35,borderWidth:3,pointRadius:4,pointBackgroundColor:'#1a7a34'},
+      {type:'line',label:'Projekcija',data:fcDS,borderColor:'#7c3aed',borderDash:[6,4],tension:.35,borderWidth:3,pointRadius:4,pointBackgroundColor:'#7c3aed',backgroundColor:'#7c3aed12',fill:true}
+    ]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,usePointStyle:true}}},scales:{y:{beginAtZero:true,grid:{color:'#0000000a'}},x:{grid:{display:false}}}}});
+  },40);
+}
+function buildCsat(){
+  $('sc-csat').innerHTML=`
+    <div class="lead">Ocjene koje građani daju nakon što im je prijava <b>riješena</b>. Ocjenu daje samo dio građana, pa su broj odgovora i raspodjela jednako važni kao prosjek.</div>
+    <div class="csat-hero">
+      <div class="csat-big"><div class="csat-score">4.1<small>/5</small></div><div class="stars">★★★★☆</div><div class="csat-lbl">Prosječna ocjena (CSAT)</div><div class="csat-meta">312 ocjena · maj 2025</div></div>
+      <div class="csat-big"><div class="csat-score" style="color:var(--brand)">+38</div><div class="csat-lbl" style="margin-top:14px">NPS — preporuka</div><div class="csat-meta">% promotera − % kritičara</div></div>
+      <div class="csat-big"><div class="csat-score" style="color:var(--blue)">24%</div><div class="csat-lbl" style="margin-top:14px">Stopa odgovora</div><div class="csat-meta">312 od 1.284 riješenih</div></div>
+    </div>
+    <div class="note" style="margin-bottom:14px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg><div><div class="note-t">Oprez pri tumačenju</div><div class="note-b">Odgovara samo ~1 od 4 građana, najčešće vrlo zadovoljni ili vrlo nezadovoljni. Prosjek može djelovati bolje ili gore nego stvarno stanje. Pratite trend i stopu odgovora — ne donosite kadrovske odluke na osnovu samog prosjeka.</div></div></div>
+    <div class="grid2b">
+      <div class="card"><div class="card-h"><div class="card-t">Raspodjela ocjena</div></div>${DIST.map(d=>`<div class="dist-row"><div class="dist-star">${d.s}</div><div class="dist-bg"><div class="dist-fill" style="width:${d.p}%"></div></div><div class="dist-n">${d.n} · ${d.p}%</div></div>`).join('')}</div>
+      <div class="card"><div class="card-h"><div class="card-t">Zadovoljstvo po službi</div></div><div class="chart-box sm"><canvas id="gCsatSvc"></canvas></div></div>
+    </div>
+    <div class="card"><div class="card-h"><div class="card-t">Trend zadovoljstva i stope odgovora</div><div class="card-badge">6 mjeseci</div></div><div class="chart-box"><canvas id="gCsatTrend"></canvas></div></div>`;
+  setTimeout(()=>{
+    if(gcharts.cs)gcharts.cs.destroy();if(gcharts.ct)gcharts.ct.destroy();
+    gcharts.cs=new Chart($('gCsatSvc'),{type:'bar',data:{labels:SERVICES.map(s=>s.n.replace('JKP ','').replace('JP ','')),datasets:[{data:SERVICES.map(s=>s.csat),backgroundColor:SERVICES.map(s=>s.csat>=4?'#1a7a34':s.csat>=3.5?'#ff9500':'#ff3b30'),borderRadius:5,maxBarThickness:28}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{min:0,max:5,grid:{color:'#0000000a'}},y:{grid:{display:false}}}}});
+    gcharts.ct=new Chart($('gCsatTrend'),{data:{labels:MONTHS,datasets:[{type:'line',label:'CSAT (1–5)',data:CST,borderColor:'#1a7a34',backgroundColor:'#1a7a341a',tension:.35,fill:true,yAxisID:'y',pointRadius:4,borderWidth:3},{type:'line',label:'Stopa odgovora %',data:RAT,borderColor:'#007aff',borderDash:[5,4],tension:.35,yAxisID:'y1',pointRadius:3,borderWidth:2}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,usePointStyle:true}}},scales:{y:{min:3,max:5,position:'left',grid:{color:'#0000000a'}},y1:{min:0,max:40,position:'right',grid:{display:false}},x:{grid:{display:false}}}}});
+  },40);
+}
+function buildSvc(){
+  $('sc-svc').innerHTML=`
+    <div class="lead">Poređenje javnih i komunalnih službi po brzini, obimu i zadovoljstvu. Rangiranje prema SLA poštovanju — udjelu prijava riješenih u dogovorenom roku.</div>
+    <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Služba</th><th>Prijave</th><th>Riješeno</th><th>SLA u roku</th><th>Prosj. vrijeme</th><th>Zadovoljstvo</th><th>Status</th></tr></thead>
+    <tbody>${SERVICES.map(s=>{const tag=s.sla>=75?['ok','Dobro']:s.sla>=55?['warn','Pratiti']:['bad','Zaostaje'];return `<tr><td style="font-weight:600">${s.n}</td><td>${s.rep}</td><td>${s.res}</td><td style="font-weight:700">${s.sla}%</td><td>${s.time}</td><td>${s.csat.toFixed(1)} ★</td><td><span class="tag ${tag[0]}">${tag[1]}</span></td></tr>`;}).join('')}</tbody></table></div></div>
+    <div class="note" style="margin-top:14px"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg><div><div class="note-t">Pravedno poređenje</div><div class="note-b">Službe rješavaju različite tipove problema s različitim rokovima (curenje vode = 4h, rupa = 24h). Niži SLA % ne znači uvijek lošiji rad — može značiti teže ili hitnije zadatke.</div></div></div>`;
+}
+
+/* ═══════════ INIT ═══════════ */
+function buildSkeleton(){
+  $('body').innerHTML=['disp','tasks','sla','map','shifts','perf','analytics','exec','equity','forecast','csat','svc']
+    .map(id=>`<section class="screen${id==='disp'?' on':''}" id="sc-${id}"></section>`).join('');
+}
+buildSkeleton();
+renderDispGroup();
+
+/* ═══════════════════════════════════════════════════════════════
+   ONLINE MOD — povlači prave prijave i radnike sa PINIT servera.
+   Bez servera (otvoren kao fajl) ostaje demo za prezentacije.
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+const SRV=(location.protocol==='http:'||location.protocol==='https:')?location.origin:'';
+if(!SRV)return;
+
+// V5 kategorije → odjel Platforme
+const CAT2DEPT={putevi:'putevi',voda:'voda',poplava:'voda',rasveta:'elektro',elektro:'elektro',otpad:'cistoca',predmet:'putevi',staklo:'putevi',ostalo:'putevi'};
+const STATUS2ST=['new','prog','prog','done'];   // server 0-3 → platform
+const ST2STATUS={new:1,prog:2,done:3};
+const DEFSLA={urgent:4,med:24,low:72};
+let WORKERS=[],lastSig='';
+
+// prioritet iz glasova ako grad nije postavio
+function autoPri(r){ if(r.pri)return r.pri; const v=r.votes||0; return v>=25?'urgent':v>=10?'med':'low'; }
+
+function mapReport(r){
+  const dept=CAT2DEPT[r.cat]||'putevi';
+  const pri=autoPri(r);
+  return {id:'R-'+r.id, _srvId:r.id, cat:(SVC_DATA[dept].cats[r.cat]?r.cat:Object.keys(SVC_DATA[dept].cats)[0]),
+    _origCat:r.cat, addr:(r.lat!=null?r.lat.toFixed(5)+', '+r.lng.toFixed(5):'bez lokacije'),
+    lat:r.lat,lng:r.lng, zone:'', status:STATUS2ST[r.status]||'new', pri,
+    votes:r.votes||0, note:r.note||'', citizen:r.name||'anonimno', ts:r.ts||Date.now(),
+    worker:r.worker||null, cost:r.cost||null, sla:DEFSLA[pri], photo:r.photo||null, _dept:dept};
+}
+
+function distribute(reports){
+  ['putevi','voda','elektro','cistoca'].forEach(d=>{SVC_DATA[d].orders=[];SVC_DATA[d].workers=[];});
+  reports.forEach(r=>{const m=mapReport(r);SVC_DATA[m._dept].orders.push(m);});
+  ['putevi','voda','elektro','cistoca'].forEach(d=>{
+    SVC_DATA[d].orders.sort((a,b)=>b.ts-a.ts);
+    SVC_DATA[d].workers=WORKERS.filter(w=>w.dept===d).map(w=>{
+      const act=SVC_DATA[d].orders.filter(o=>o.worker===w.id&&o.status!=='done').length;
+      const done=SVC_DATA[d].orders.filter(o=>o.worker===w.id&&o.status==='done').length;
+      return {id:w.id,name:w.name,role:w.role,av:w.av,bg:'#eef2f7',tc:'#334155',
+        status:act>0?'busy':'free',tasks:act,done,sla:null,loc:act>0?'na terenu':'Baza'};
+    });
+  });
+}
+
+function pull(){
+  Promise.all([
+    fetch(SRV+'/api/reports').then(r=>r.json()).catch(()=>[]),
+    fetch(SRV+'/api/workers').then(r=>r.json()).catch(()=>[])
+  ]).then(([reports,workers])=>{
+    WORKERS=workers||[];
+    const sig=JSON.stringify((reports||[]).map(r=>[r.id,r.status,r.worker,r.votes]))+JSON.stringify(WORKERS.map(w=>w.id));
+    if(sig===lastSig)return; lastSig=sig;
+    distribute(reports||[]);
+    if(typeof renderDispGroup==='function')renderDispGroup();
+    if(current==='exec'||current==='equity'||current==='forecast'||current==='csat'||current==='svc')
+      { if(typeof renderGrad==='function')renderGrad(); }
+    cleanAnalytics();
+  });
+}
+
+/* dodjela / status → server, pa lokalno */
+window.assign=function(oid,wid){
+  const o=getO(oid);if(!o)return;
+  fetch(SRV+'/api/reports/'+o._srvId,{method:'PATCH',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({worker:wid,status:2})}).then(()=>{lastSig='';pull();
+    if(typeof closeModal==='function')closeModal();
+    const w=(WORKERS.find(x=>x.id===wid)||{}).name||'';toast('✓ Dodijeljeno serveru: '+w);}).catch(()=>toast('Greška'));
+};
+window.markDone=function(oid){
+  const o=getO(oid);if(!o)return;
+  fetch(SRV+'/api/reports/'+o._srvId,{method:'PATCH',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({status:3})}).then(()=>{lastSig='';pull();toast('✓ Riješeno — građanin vidi u aplikaciji');}).catch(()=>toast('Greška'));
+};
+window.setStat=function(oid,st){
+  const o=getO(oid);if(!o)return;
+  fetch(SRV+'/api/reports/'+o._srvId,{method:'PATCH',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({status:ST2STATUS[st]||1})}).then(()=>{lastSig='';pull();}).catch(()=>{});
+};
+
+/* označi analitiku koja nema stvaran izvor podataka */
+function cleanAnalytics(){
+  const allR=['putevi','voda','elektro','cistoca'].reduce((s,d)=>s+SVC_DATA[d].orders.length,0);
+  document.querySelectorAll('[data-nodata]').forEach(e=>e.remove());
+  if(allR<5){
+    ['sc-exec','sc-equity','sc-forecast','sc-csat','sc-perf','sc-shifts'].forEach(id=>{
+      const el=document.getElementById(id);if(!el||el.querySelector('[data-nodata]'))return;
+      const b=document.createElement('div');b.setAttribute('data-nodata','1');
+      b.style.cssText='margin:0 0 16px;padding:14px 16px;border:1px dashed #f5a623;background:#fff8ec;border-radius:12px;color:#8a5a00;font-size:13px;line-height:1.5;';
+      b.innerHTML='⚠️ <b>Nedovoljno podataka za pouzdanu analitiku.</b> Ovaj ekran postaje smislen kad se skupi više stvarnih prijava (učinak, pravednost po zonama, prognoze i zadovoljstvo traže sedmice podataka i ocjene građana). Trenutno prikazano su ilustrativne vrijednosti — ne stvarni pokazatelji.';
+      el.insertBefore(b,el.firstChild);
+    });
+  }
+}
+
+/* radnici — dodavanje preko forme */
+window.pinitAddWorker=function(){
+  const dept=activeSvc;
+  const name=prompt('Ime i prezime radnika:');if(!name)return;
+  const role=prompt('Uloga (npr. Asfalter, Vodoinstalater):','Terenac')||'Terenac';
+  fetch(SRV+'/api/workers',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name,role,dept})}).then(r=>r.json()).then(()=>{lastSig='';pull();toast('➕ Radnik dodan: '+name);}).catch(()=>toast('Greška'));
+};
+
+// dugme "Dodaj radnika" u zaglavlju kad si na mapi radnika
+const origNav=window.nav;
+window.nav=function(id,btn){origNav(id,btn);setTimeout(injectWorkerBtn,30);};
+function injectWorkerBtn(){
+  if(current!=='map')return;
+  const sc=document.getElementById('sc-map');if(!sc||sc.querySelector('#addWk'))return;
+  const b=document.createElement('button');b.id='addWk';b.className='btn';b.textContent='➕ Dodaj radnika';
+  b.style.cssText='margin-bottom:14px;';b.onclick=pinitAddWorker;
+  sc.insertBefore(b,sc.firstChild);
+}
+
+pull();
+setInterval(pull,12000);
+})();
+</script>
+</body>
+</html>

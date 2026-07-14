@@ -1,0 +1,8 @@
+{
+  "name": "pinit",
+  "version": "1.0.0",
+  "description": "PINIT — građanska aplikacija (prijave + Drive mjerenje cesta), dispečer platforma i Drive komandni centar. Server bez ijedne instalacije (čisti Node.js).",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=16" }
+}
